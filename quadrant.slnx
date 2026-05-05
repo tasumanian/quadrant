@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="quadrant.vcxproj" />
+  <Project Path="quadrant.vcxproj" Id="ef6babcf-bf02-41ba-a9c6-b5c5eff064d0" />
 </Solution>
