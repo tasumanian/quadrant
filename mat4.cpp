@@ -39,6 +39,21 @@ Mat4 Mat4::RotationY(float angle)
 
 	return result;
 }
+Mat4 Mat4::RotationX(float angle)
+{
+	Mat4 result = Indentitiy();
+
+	float c = std::cos(angle);
+	float s = std::sin(angle);
+
+	result.m[5] = c;
+	result.m[6] = -s;
+
+	result.m[9] = s;
+	result.m[10] = c;
+
+	return result;
+}
 Mat4 Mat4::Perspective(float fovY, float aspect, float nearZ, float farZ)
 {
 	Mat4 result = {};

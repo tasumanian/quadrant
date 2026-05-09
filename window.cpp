@@ -56,3 +56,7 @@ bool Window::Create(const char* title, int width, int height)
 
     return true;
 }
+SDL_Window* Window::GetSDLWindow() const
+{
+    return m_window;
+}

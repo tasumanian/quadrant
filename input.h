@@ -15,6 +15,7 @@ class Input
 
         bool QuitRequested() const;
 
+
     private:
         bool GetKeyState(const std::unordered_map<SDL_Keycode, bool>& map, SDL_Keycode key) const;
 
@@ -22,4 +23,5 @@ class Input
         bool m_quitRequested = false;
         std::unordered_map<SDL_Keycode, bool> m_currentKeys;
         std::unordered_map<SDL_Keycode, bool> m_previousKeys;
+
 };

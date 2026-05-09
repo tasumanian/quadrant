@@ -145,6 +145,7 @@
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="shader.cpp" />
+    <ClCompile Include="stateinput.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="transform.cpp" />
     <ClCompile Include="window.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="renderer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="stateinput.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="transform.h" />
     <ClInclude Include="window.h" />

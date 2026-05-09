@@ -9,5 +9,8 @@ public:
     float y = 0.0f;
     float z = 0.0f;
 
+    float yaw = 0.0f;
+    float pitch = 0.0f;
+
     Mat4 GetViewMatrix() const;
 };

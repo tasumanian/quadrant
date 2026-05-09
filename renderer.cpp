@@ -1,7 +1,6 @@
 #include "renderer.h"
 #include "window.h"
-
-#include <glad/glad.h>
+#include <SDL3/SDL_mouse.h>
 
 
 //頂点シェーダの設定(よくわからん)
@@ -41,10 +40,11 @@ void main()
 }
 )";
 
-bool Renderer::Initialize()
+bool Renderer::Initialize(Window& window)
 {
     SDL_Log("Renderer Initialize");
     SDL_Log("%s", kVertexShader);
+    m_window = &window;
     //シェーダの生成
     if (!m_shader.Create(kVertexShader, kFragmentShader)) 
     {
@@ -66,12 +66,110 @@ bool Renderer::Initialize()
     m_camera.z = 0.0f;
 
     glEnable(GL_DEPTH_TEST); //深度比較
+    SDL_SetWindowRelativeMouseMode(
+        window.GetSDLWindow(),
+        true
+    ); //マウス操作の有効か
 
+    m_lastTicks = SDL_GetTicks();
     return true;
 }
 void Renderer::Draw()
 {
-    m_transform.rotationY += 0.01f;
+    Uint64 currentTicks = SDL_GetTicks();
+
+    float deltaTime =
+        (currentTicks - m_lastTicks) / 1000.0f;
+
+    m_lastTicks = currentTicks;
+    float rotationSpeed = 1.0f;
+
+   // m_transform.rotationY +=
+   //     rotationSpeed * deltaTime;
+
+    /*
+    float pitchSpeed = 2.0f;
+
+    if (StateInput::IsKeyDown(SDL_SCANCODE_R))
+    {
+        m_camera.pitch +=
+            pitchSpeed * deltaTime;
+    }
+
+    if (StateInput::IsKeyDown(SDL_SCANCODE_F))
+    {
+        m_camera.pitch -=
+            pitchSpeed * deltaTime;
+    }
+
+    float turnSpeed = 2.0f;
+
+    if (StateInput::IsKeyDown(SDL_SCANCODE_Q))
+    {
+        m_camera.yaw +=
+            turnSpeed * deltaTime;
+    }
+
+    if (StateInput::IsKeyDown(SDL_SCANCODE_E))
+    {
+        m_camera.yaw -=
+            turnSpeed * deltaTime;
+    }
+    */
+    float mouseSensitivity = 0.001f;
+
+    int mouseDeltaX = StateInput::GetMouseDeltaX();
+    int mouseDeltaY = StateInput::GetMouseDeltaY();
+
+    m_camera.yaw +=
+        mouseDeltaX * mouseSensitivity;
+    
+    m_camera.pitch +=
+        mouseDeltaY * mouseSensitivity;
+
+    float forwardX =
+        std::cos(m_camera.pitch) *
+        std::sin(m_camera.yaw);
+
+    float forwardY =
+        std::sin(m_camera.pitch);
+
+    float forwardZ =
+        -std::cos(m_camera.pitch) *
+        std::cos(m_camera.yaw);
+
+    float rightX = std::cos(m_camera.yaw);
+    float rightZ = std::sin(m_camera.yaw);
+
+
+    float moveSpeed = 2.0f;
+
+    if (StateInput::IsKeyDown(SDL_SCANCODE_W))
+    {
+        m_camera.x += forwardX * moveSpeed * deltaTime;
+        m_camera.y += forwardY * moveSpeed * deltaTime;
+        m_camera.z += forwardZ * moveSpeed * deltaTime;
+    }
+
+    if (StateInput::IsKeyDown(SDL_SCANCODE_S))
+    {
+        m_camera.x -= forwardX * moveSpeed * deltaTime;
+        m_camera.y -= forwardY * moveSpeed * deltaTime;
+        m_camera.z -= forwardZ * moveSpeed * deltaTime;
+    }
+
+    if (StateInput::IsKeyDown(SDL_SCANCODE_A))
+    {
+        m_camera.x -= rightX * moveSpeed * deltaTime;
+        m_camera.z += rightZ * moveSpeed * deltaTime;
+    }
+
+    if (StateInput::IsKeyDown(SDL_SCANCODE_D))
+    {
+        m_camera.x += rightX * moveSpeed * deltaTime;
+        m_camera.z -= rightZ * moveSpeed * deltaTime;
+    }
+
 
     m_shader.Bind();
 
@@ -101,6 +199,7 @@ void Renderer::Draw()
     m_shader.SetVec3("uColor", 1.0f, 0.2f, 0.2f);
     m_mesh.Draw();
 }
+
 void Renderer::BeginFrame() //window描写
 {
 	glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
