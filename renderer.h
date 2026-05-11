@@ -27,4 +27,5 @@ class Renderer
 		StateInput m_stateinput;
 		Window* m_window = nullptr;
 		Uint64 m_lastTicks = 0;
+		GLuint m_texture = 0;
 };

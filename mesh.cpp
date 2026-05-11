@@ -2,23 +2,23 @@
 
 #include <glad/glad.h>
 
-bool Mesh::CreateTriangle()
+bool Mesh::CreateObject()
 {
     //次のs消すとエラー
-    //三角形の座標を設定s 
-    float vertices[] =
+    //座標を設定s 
+    Vertex vertices[] =
     {
         // Front
-        -0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
+        {-0.5f, -0.5f,  0.5f, 0.0f, 0.0f},
+        { 0.5f, -0.5f,  0.5f, 1.0f, 0.0f},
+        { 0.5f,  0.5f,  0.5f, 1.0f, 1.0f},
+        {-0.5f,  0.5f,  0.5f, 0.0f, 1.0f},
 
         // Back
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f
+        {-0.5f, -0.5f, -0.5f, 0.0f, 0.0f},
+        { 0.5f, -0.5f, -0.5f, 0.0f, 0.0f},
+        { 0.5f,  0.5f, -0.5f, 0.0f, 0.0f},
+        {-0.5f,  0.5f, -0.5f, 0.0f, 0.0f},
     };
     unsigned int indices[] =
     {
@@ -64,9 +64,27 @@ bool Mesh::CreateTriangle()
         indices,
         GL_STATIC_DRAW
     );
+    glVertexAttribPointer(
+        0,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(Vertex),
+        (void*)0
+    );
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(
+        1,
+        2,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(Vertex),
+        (void*)(3 * sizeof(float))
+    );
+
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);

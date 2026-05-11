@@ -1,26 +1,32 @@
 #include "renderer.h"
 #include "window.h"
 #include <SDL3/SDL_mouse.h>
-
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 //頂点シェーダの設定(よくわからん)
 //多分meshの形、位置の設定
 static const char* kVertexShader = R"(
 #version 330 core
 layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec2 aUV;
 
 uniform mat4 uModel; //ワールド座標化
 uniform mat4 uView; //カメラ座標化
 uniform mat4 uProj; //投影化(遠近法)
 
-out vec3 vDebug;
+out vec2 vUV;
 
 void main()
 {
 
-    vec4 p = uProj * uView * uModel * vec4(aPos, 1.0);
-    gl_Position = p;
-    vDebug = p.xyz;
+    gl_Position =
+        uProj *
+        uView *
+        uModel *
+        vec4(aPos, 1.0);
+
+    vUV = aUV;
 }
 )";
 
@@ -28,15 +34,17 @@ void main()
 //多分色とかの設定
 static const char* kFragmentShader = R"(
 #version 330 core
-in vec3 vDebug;
 
-uniform vec3 uColor;
+in vec2 vUV;
+
+uniform sampler2D uTexture;
 
 out vec4 FragColor;
 
 void main()
 {
-    FragColor = vec4(uColor, 1.0);
+    //uv座標を元にテクスチャから色を取得
+    FragColor = texture(uTexture, vUV);
 }
 )";
 
@@ -51,8 +59,61 @@ bool Renderer::Initialize(Window& window)
         return false;
     }
 
-    //メッシュの作成(三角形)
-    if (!m_mesh.CreateTriangle())
+    int width;
+    int height;
+    int channels;
+
+    unsigned char* data =
+        stbi_load(
+            "assets/test.png", //RGBA8で読み込む
+            &width,
+            &height,
+            &channels,
+            4
+        );
+    if (!data)
+    {
+        SDL_Log("Failed to load texture");
+        return false;
+    }
+    glGenTextures(1, &m_texture);
+
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA8,
+        width,
+        height,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        data
+    );
+    glTexParameteri(
+        GL_TEXTURE_2D,
+        GL_TEXTURE_MIN_FILTER,
+        GL_LINEAR
+    );
+
+    glTexParameteri(
+        GL_TEXTURE_2D,
+        GL_TEXTURE_MAG_FILTER,
+        GL_LINEAR
+    );
+    glUseProgram(m_shader.GetProgram());
+
+    GLint texLocation =
+        glGetUniformLocation(
+            m_shader.GetProgram(),
+            "uTexture"
+        );
+
+    glUniform1i(texLocation, 0);
+    stbi_image_free(data);
+    //メッシュの作成()
+    if (!m_mesh.CreateObject())
     {
         return false;
     }
@@ -127,6 +188,18 @@ void Renderer::Draw()
     m_camera.pitch +=
         mouseDeltaY * mouseSensitivity;
 
+    float maxPitch = 1.55f; //89度くらい
+
+    if (m_camera.pitch > maxPitch) //上限設定
+    {
+        m_camera.pitch = maxPitch;
+    }
+
+    if (m_camera.pitch < -maxPitch) //下限設定
+    {
+        m_camera.pitch = -maxPitch;
+    }
+
     float forwardX =
         std::cos(m_camera.pitch) *
         std::sin(m_camera.yaw);
@@ -197,6 +270,9 @@ void Renderer::Draw()
     Mat4 modelFront = m_transform.ToMatrix();
     m_shader.SetMat4("uModel", modelFront);
     m_shader.SetVec3("uColor", 1.0f, 0.2f, 0.2f);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+
     m_mesh.Draw();
 }
 

@@ -3,8 +3,18 @@
 class Mesh
 {
 public:
-    bool CreateTriangle();
+    bool CreateObject();
     void Draw() const;
+
+    struct Vertex
+    {
+        float x;
+        float y;
+        float z;
+
+        float u;
+        float v;
+    };
 
 private:
     unsigned int m_vao = 0;

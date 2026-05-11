@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mat4.h"
+#include <glad/glad.h>
 
 class Shader
 {
@@ -9,6 +10,7 @@ public:
     void Bind() const;
     void SetVec3(const char* name, float x, float y, float z) const;
     void SetMat4(const char* name, const Mat4& value) const;
+    GLuint GetProgram() const;
 
 private:
     unsigned int Compile(unsigned int type, const char* source);

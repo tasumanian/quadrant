@@ -151,6 +151,7 @@
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="app.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="input.h" />

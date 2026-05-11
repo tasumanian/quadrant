@@ -53,6 +53,11 @@ bool Shader::Create(const char* vertexSource, const char* fragmentSource)
     return CheckProgram(m_program);
 }
 
+GLuint Shader::GetProgram() const
+{
+    return m_program;
+}
+
 void Shader::Bind() const
 {
     glUseProgram(m_program);
