@@ -10,12 +10,14 @@ static const char* kVertexShader = R"(
 #version 330 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aUV;
+layout(location = 2) in vec3 aNormal;
 
 uniform mat4 uModel; //ワールド座標化
 uniform mat4 uView; //カメラ座標化
 uniform mat4 uProj; //投影化(遠近法)
+out vec3 vNormal; //法線ベクトル
 
-out vec2 vUV;
+out vec2 vUV; //UV座標
 
 void main()
 {
@@ -27,6 +29,7 @@ void main()
         vec4(aPos, 1.0);
 
     vUV = aUV;
+    vNormal = aNormal;  
 }
 )";
 
@@ -36,6 +39,7 @@ static const char* kFragmentShader = R"(
 #version 330 core
 
 in vec2 vUV;
+in vec3 vNormal;
 
 uniform sampler2D uTexture;
 
@@ -44,7 +48,22 @@ out vec4 FragColor;
 void main()
 {
     //uv座標を元にテクスチャから色を取得
-    FragColor = texture(uTexture, vUV);
+     vec3 lightDir =
+        normalize(vec3(1.0, 1.0, 1.0));
+
+    float diffuse = //ライティング
+        max(dot(vNormal, lightDir), 0.0);
+
+    vec3 texColor = //UV+テクスチャー
+        texture(uTexture, vUV).rgb;
+
+    float ambient = 0.2; //最低保証の光
+
+    vec3 finalColor = //合成
+        texColor * (diffuse + ambient);
+
+    FragColor =
+        vec4(finalColor, 1.0);
 }
 )";
 
@@ -117,14 +136,8 @@ bool Renderer::Initialize(Window& window)
     {
         return false;
     }
-    m_transform.x = 0.0f;
-    m_transform.y = 0.0f;
-    m_transform.z = -2.0f;
-
+    m_object.mesh = &m_mesh;
     //カメラの座標を手前にしておく
-    m_camera.x = 0.0f;
-    m_camera.y = 0.0f;
-    m_camera.z = 0.0f;
 
     glEnable(GL_DEPTH_TEST); //深度比較
     SDL_SetWindowRelativeMouseMode(
@@ -145,39 +158,7 @@ void Renderer::Draw()
     m_lastTicks = currentTicks;
     float rotationSpeed = 1.0f;
 
-   // m_transform.rotationY +=
-   //     rotationSpeed * deltaTime;
-
-    /*
-    float pitchSpeed = 2.0f;
-
-    if (StateInput::IsKeyDown(SDL_SCANCODE_R))
-    {
-        m_camera.pitch +=
-            pitchSpeed * deltaTime;
-    }
-
-    if (StateInput::IsKeyDown(SDL_SCANCODE_F))
-    {
-        m_camera.pitch -=
-            pitchSpeed * deltaTime;
-    }
-
-    float turnSpeed = 2.0f;
-
-    if (StateInput::IsKeyDown(SDL_SCANCODE_Q))
-    {
-        m_camera.yaw +=
-            turnSpeed * deltaTime;
-    }
-
-    if (StateInput::IsKeyDown(SDL_SCANCODE_E))
-    {
-        m_camera.yaw -=
-            turnSpeed * deltaTime;
-    }
-    */
-    float mouseSensitivity = 0.001f;
+    float mouseSensitivity = 0.05f;
 
     int mouseDeltaX = StateInput::GetMouseDeltaX();
     int mouseDeltaY = StateInput::GetMouseDeltaY();
@@ -185,20 +166,15 @@ void Renderer::Draw()
     m_camera.yaw +=
         mouseDeltaX * mouseSensitivity;
     
-    m_camera.pitch +=
+    m_camera.pitch -=
         mouseDeltaY * mouseSensitivity;
+    m_camera.UpdateVectors();
+    if (m_camera.pitch > 89.0f)
+        m_camera.pitch = 89.0f;
 
-    float maxPitch = 1.55f; //89度くらい
+    if (m_camera.pitch < -89.0f)
+        m_camera.pitch = -89.0f;
 
-    if (m_camera.pitch > maxPitch) //上限設定
-    {
-        m_camera.pitch = maxPitch;
-    }
-
-    if (m_camera.pitch < -maxPitch) //下限設定
-    {
-        m_camera.pitch = -maxPitch;
-    }
 
     float forwardX =
         std::cos(m_camera.pitch) *
@@ -215,59 +191,62 @@ void Renderer::Draw()
     float rightZ = std::sin(m_camera.yaw);
 
 
-    float moveSpeed = 2.0f;
+    float moveSpeed = 0.2f;
 
     if (StateInput::IsKeyDown(SDL_SCANCODE_W))
     {
-        m_camera.x += forwardX * moveSpeed * deltaTime;
-        m_camera.y += forwardY * moveSpeed * deltaTime;
-        m_camera.z += forwardZ * moveSpeed * deltaTime;
+        m_camera.position +=
+            m_camera.forward * moveSpeed;
     }
 
     if (StateInput::IsKeyDown(SDL_SCANCODE_S))
     {
-        m_camera.x -= forwardX * moveSpeed * deltaTime;
-        m_camera.y -= forwardY * moveSpeed * deltaTime;
-        m_camera.z -= forwardZ * moveSpeed * deltaTime;
+        m_camera.position -=
+            m_camera.forward * moveSpeed;
     }
 
     if (StateInput::IsKeyDown(SDL_SCANCODE_A))
     {
-        m_camera.x -= rightX * moveSpeed * deltaTime;
-        m_camera.z += rightZ * moveSpeed * deltaTime;
+        m_camera.position -=
+            m_camera.right * moveSpeed;
     }
 
     if (StateInput::IsKeyDown(SDL_SCANCODE_D))
     {
-        m_camera.x += rightX * moveSpeed * deltaTime;
-        m_camera.z -= rightZ * moveSpeed * deltaTime;
+        m_camera.position +=
+            m_camera.right * moveSpeed;
     }
 
 
     m_shader.Bind();
 
-    Mat4 view = m_camera.GetViewMatrix();
-    Mat4 proj = Mat4::Perspective(1.0f, 800.0f / 600.0f, 0.1f, 100.0f);
+    glm::mat4 view = m_camera.GetViewMatrix();
+    glm::mat4 proj =
+        glm::perspective(
+            glm::radians(60.0f),
+            1280.0f / 720.0f,
+            0.1f,
+            100.0f
+        );
 
     m_shader.SetMat4("uView", view);
     m_shader.SetMat4("uProj", proj);
 
     // 奥（青）
-    m_transform.x = -0.1f;
-    m_transform.y = 0.0f;
-    m_transform.z = -2.5f;
+    m_object.transform.position =
+        glm::vec3(-1, 0, -2);
 
-    Mat4 modelBack = m_transform.ToMatrix();
+    glm::mat4 modelBack =
+        m_object.transform.GetMatrix();
     m_shader.SetMat4("uModel", modelBack);
     m_shader.SetVec3("uColor", 0.2f, 0.3f, 1.0f);
     m_mesh.Draw();
 
     // 手前（赤）
-    m_transform.x = 0.1f;
-    m_transform.y = 0.0f;
-    m_transform.z = -2.0f;
-
-    Mat4 modelFront = m_transform.ToMatrix();
+    m_object.transform.position =
+        glm::vec3(1, 0, -2);
+    glm::mat4 modelFront =
+        m_object.transform.GetMatrix();
     m_shader.SetMat4("uModel", modelFront);
     m_shader.SetVec3("uColor", 1.0f, 0.2f, 0.2f);
     glActiveTexture(GL_TEXTURE0);

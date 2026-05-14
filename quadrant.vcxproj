@@ -108,7 +108,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\SDL3-3.4.8\include;C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\glad\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\SDL3-3.4.8\include;C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\glad\include;C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\glm-master</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,6 +139,7 @@
     <ClCompile Include="addon\glad\src\glad.c" />
     <ClCompile Include="app.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="gameobject.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mat4.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="app.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="gameobject.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="mat4.h" />
     <ClInclude Include="mesh.h" />

@@ -9,42 +9,67 @@ bool Mesh::CreateObject()
     Vertex vertices[] =
     {
         // Front
-        {-0.5f, -0.5f,  0.5f, 0.0f, 0.0f},
-        { 0.5f, -0.5f,  0.5f, 1.0f, 0.0f},
-        { 0.5f,  0.5f,  0.5f, 1.0f, 1.0f},
-        {-0.5f,  0.5f,  0.5f, 0.0f, 1.0f},
+        {-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0,0,1},
+        { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0,0,1},
+        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0,0,1},
+        {-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0,0,1},
 
         // Back
-        {-0.5f, -0.5f, -0.5f, 0.0f, 0.0f},
-        { 0.5f, -0.5f, -0.5f, 0.0f, 0.0f},
-        { 0.5f,  0.5f, -0.5f, 0.0f, 0.0f},
-        {-0.5f,  0.5f, -0.5f, 0.0f, 0.0f},
-    };
-    unsigned int indices[] =
-    {
-        // Front
-        0, 1, 2,
-        2, 3, 0,
+        { 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, 0,0,-1},
+        {-0.5f, -0.5f, -0.5f,  1.0f,  0.0f, 0,0,-1},
+        {-0.5f,  0.5f, -0.5f,  1.0f,  1.0f, 0,0,-1},
+        { 0.5f,  0.5f, -0.5f,  0.0f,  1.0f, 0,0,-1},
 
         // Right
-        1, 5, 6,
-        6, 2, 1,
-
-        // Back
-        5, 4, 7,
-        7, 6, 5,
+        { 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1,0,0},
+        { 0.5f, -0.5f, -0.5f,  1.0f,  0.0f, 1,0,0},
+        { 0.5f,  0.5f, -0.5f,  1.0f,  1.0f, 1,0,0},
+        { 0.5f,  0.5f,  0.5f,  0.0f,  1.0f, 1,0,0},
 
         // Left
-        4, 0, 3,
-        3, 7, 4,
+        {-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,-1,0,0},
+        {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f,-1,0,0},
+        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f,-1,0,0},
+        {-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,-1,0,0},
 
         // Top
-        3, 2, 6,
-        6, 7, 3,
+        {-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,0,1,0},
+        { 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,0,1,0},
+        { 0.5f,  0.5f, -0.5f,  1.0f,  1.0f,0,1,0},
+        {-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,0,1,0},
 
         // Bottom
-        4, 5, 1,
-        1, 0, 4
+        {-0.5f, -0.5f, -0.5f,  0.0f,  0.0f,0,-1,0},
+        { 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,0,-1,0},
+        { 0.5f, -0.5f,  0.5f,  1.0f,  1.0f,0,-1,0},
+        {-0.5f, -0.5f,  0.5f,  0.0f,  1.0f,0,-1,0},
+    };
+    unsigned int indices[] = //各頂点の順番
+    {
+		//各面2つの三角形で構成されるため、6つの頂点が必要.
+        // Front
+       0, 1, 2,
+       2, 3, 0,
+
+       // Back
+       4, 5, 6,
+       6, 7, 4,
+
+       // Right
+       8, 9, 10,
+       10, 11, 8,
+
+       // Left
+       12, 13, 14,
+       14, 15, 12,
+
+       // Top
+       16, 17, 18,
+       18, 19, 16,
+
+       // Bottom
+       20, 21, 22,
+       22, 23, 20
     };
 
     glGenVertexArrays(1, &m_vao);
@@ -64,7 +89,7 @@ bool Mesh::CreateObject()
         indices,
         GL_STATIC_DRAW
     );
-    glVertexAttribPointer(
+    glVertexAttribPointer( //xyzの読み込み
         0,
         3,
         GL_FLOAT,
@@ -75,7 +100,7 @@ bool Mesh::CreateObject()
 
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(
+    glVertexAttribPointer( //uvの読み込み
         1,
         2,
         GL_FLOAT,
@@ -85,6 +110,17 @@ bool Mesh::CreateObject()
     );
 
     glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer( //法線の読み込み
+        2,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(Vertex),
+        (void*)(5 * sizeof(float))
+    );
+
+    glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);

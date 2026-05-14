@@ -2,9 +2,8 @@
 
 #include <SDL3/SDL.h> 
 #include "shader.h"
-#include "mesh.h"
-#include "transform.h"
 #include "camera.h"
+#include "GameObject.h"
 #include "stateinput.h"
 #include <glad/glad.h>
 #include <cmath>
@@ -21,8 +20,8 @@ class Renderer
 
 	private:
 		Shader m_shader;
+		GameObject m_object;
 		Mesh m_mesh;
-		Transform m_transform;
 		Camera m_camera;
 		StateInput m_stateinput;
 		Window* m_window = nullptr;

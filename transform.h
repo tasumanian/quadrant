@@ -1,14 +1,19 @@
 #pragma once
 
-#include "mat4.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 struct Transform
 {
-	float x = 0.0f;
-	float y = 0.0f;
-	float z = 0.0f;
+	public:
 
-	float rotationY = 0.0f;
+		glm::vec3 position;
+		glm::vec3 rotation;
+		glm::vec3 scale;
 
-	Mat4 ToMatrix() const;
+	public:
+
+		Transform();
+
+		glm::mat4 GetMatrix() const;
 };

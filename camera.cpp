@@ -1,17 +1,55 @@
 #include "camera.h"
 
-Mat4 Camera::GetViewMatrix() const
+glm::mat4 Camera::GetViewMatrix() const
 {
-	//カメラを動かすとき、世界自体を逆方向に動かす
-    Mat4 translation =
-        Mat4::Translation(-x, -y, -z);
+    return glm::lookAt(
+        position,
+        position + forward,
+        up
+    );
+}
+Camera::Camera()
+{
+    position = glm::vec3(0.0f, 0.0f, 3.0f);
 
-    Mat4 yawRotation =
-        Mat4::RotationY(-yaw);
-    Mat4 pitchRotation =
-        Mat4::RotationX(-pitch);
+    yaw = -90.0f;
+    pitch = 0.0f;
 
-    //順番大事
-    return pitchRotation *
-            yawRotation * translation;
+    up = glm::vec3(0.0f, 1.0f, 0.0f);
+
+    UpdateVectors();
+}
+void Camera::UpdateVectors()
+{
+    glm::vec3 dir;
+
+    dir.x =
+        cos(glm::radians(yaw))
+        * cos(glm::radians(pitch));
+
+    dir.y =
+        sin(glm::radians(pitch));
+
+    dir.z =
+        sin(glm::radians(yaw))
+        * cos(glm::radians(pitch));
+
+    forward =
+        glm::normalize(dir);
+
+    right =
+        glm::normalize(
+            glm::cross(
+                forward,
+                glm::vec3(0.0f, 1.0f, 0.0f)
+            )
+        );
+
+    up =
+        glm::normalize(
+            glm::cross(
+                right,
+                forward
+            )
+        );
 }

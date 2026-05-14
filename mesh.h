@@ -14,6 +14,10 @@ public:
 
         float u;
         float v;
+
+        float nx;
+        float ny;
+        float nz;
     };
 
 private:

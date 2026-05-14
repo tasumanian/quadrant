@@ -76,14 +76,20 @@ void Shader::SetVec3(const char* name, float x, float y, float z) const
 }
 
 
-void Shader::SetMat4(const char* name, const Mat4& value) const
+void Shader::SetMat4(const char* name, const glm::mat4& mat) const
 {
-    SDL_Log("Program = %u", m_program);
-    //uniform mat4 uModel(render.cpp,KVertexShader)を取得x
-    GLint location = glGetUniformLocation(m_program, name);
-    SDL_Log("Uniform %s location = %d", name, location);
-    //行列をGPUに送信  GL_FALSEは"転置しないこと"
-    glUniformMatrix4fv(location, 1, GL_FALSE, value.m);
+	GLint location = // シェーダ内のuniform変数の場所を取得s
+        glGetUniformLocation(
+            m_program,
+            name
+        );
+
+    glUniformMatrix4fv(
+        location,
+        1,
+        GL_FALSE, //行列を転置しないs
+		glm::value_ptr(mat) //glm::mat4をfloat配列に変換s
+    );
 }
 
 bool Shader::CheckShader(unsigned int shader, unsigned int type) const
