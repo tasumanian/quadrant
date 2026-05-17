@@ -10,10 +10,10 @@ struct Transform
 		glm::vec3 position;
 		glm::vec3 rotation;
 		glm::vec3 scale;
-
-	public:
+		Transform* parent;
 
 		Transform();
 
+		glm::mat4 GetWorldMatrix() const;
 		glm::mat4 GetMatrix() const;
 };

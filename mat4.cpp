@@ -1,7 +1,7 @@
 #include "mat4.h"
 #include <cmath>
 
-Mat4 Mat4::Indentitiy()
+Mat4 Mat4::Indentitiy() //単位行列の生成
 {
 	Mat4 result = {}; //0初期化
 
@@ -24,7 +24,7 @@ Mat4 Mat4::Translation(float x, float y, float z)
 
 	return result;
 }
-Mat4 Mat4::RotationY(float angle)
+Mat4 Mat4::RotationY(float angle) //Y軸回転行列の生成
 {
 	Mat4 result = Indentitiy();
 

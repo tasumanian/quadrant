@@ -9,9 +9,14 @@ public:
 
 	void Tick();
 	float GetDeltaTime() const;
+	bool ShouldFixedUpdate();
+
+	float GetFixedTimeStep() const;
 
 private:
-	std::uint64_t m_lastCounter;
+	float m_fixedTimeStep;
+	float m_accumulator;
 	float m_deltaTime;
+	std::uint64_t m_lastCounter;
 
 };

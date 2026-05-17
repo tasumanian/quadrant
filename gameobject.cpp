@@ -2,5 +2,7 @@
 
 GameObject::GameObject()
 {
+    rigidbody = nullptr;
     mesh = nullptr;
+	material = nullptr;
 }

@@ -3,7 +3,7 @@
 #include <SDL3/SDL.h>
 #include <unordered_map>
 
-class Input
+class EventInput
 {
     public:
         void BeginFrame();

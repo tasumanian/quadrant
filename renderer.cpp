@@ -1,8 +1,6 @@
 #include "renderer.h"
 #include "window.h"
 #include <SDL3/SDL_mouse.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 //頂点シェーダの設定(よくわからん)
 //多分meshの形、位置の設定
@@ -78,50 +76,10 @@ bool Renderer::Initialize(Window& window)
         return false;
     }
 
-    int width;
-    int height;
-    int channels;
+    m_material.shader = &m_shader;
+    m_material.texture = &m_texture;
 
-    unsigned char* data =
-        stbi_load(
-            "assets/test.png", //RGBA8で読み込む
-            &width,
-            &height,
-            &channels,
-            4
-        );
-    if (!data)
-    {
-        SDL_Log("Failed to load texture");
-        return false;
-    }
-    glGenTextures(1, &m_texture);
-
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-
-    glTexImage2D(
-        GL_TEXTURE_2D,
-        0,
-        GL_RGBA8,
-        width,
-        height,
-        0,
-        GL_RGBA,
-        GL_UNSIGNED_BYTE,
-        data
-    );
-    glTexParameteri(
-        GL_TEXTURE_2D,
-        GL_TEXTURE_MIN_FILTER,
-        GL_LINEAR
-    );
-
-    glTexParameteri(
-        GL_TEXTURE_2D,
-        GL_TEXTURE_MAG_FILTER,
-        GL_LINEAR
-    );
-    glUseProgram(m_shader.GetProgram());
+	m_texture.Load("assets/test.png");
 
     GLint texLocation =
         glGetUniformLocation(
@@ -130,13 +88,11 @@ bool Renderer::Initialize(Window& window)
         );
 
     glUniform1i(texLocation, 0);
-    stbi_image_free(data);
     //メッシュの作成()
     if (!m_mesh.CreateObject())
     {
         return false;
     }
-    m_object.mesh = &m_mesh;
     //カメラの座標を手前にしておく
 
     glEnable(GL_DEPTH_TEST); //深度比較
@@ -146,20 +102,60 @@ bool Renderer::Initialize(Window& window)
     ); //マウス操作の有効か
 
     m_lastTicks = SDL_GetTicks();
+
+
+    GameObject obj1; //オブジェクトの生成
+    obj1.mesh = &m_mesh;
+    obj1.transform.position =
+        glm::vec3(-2.0f, 0.0f, -5.0f);
+    obj1.material = &m_material;
+    obj1.rigidbody =
+        &m_rigidbody;
+
+    m_objects.push_back(obj1); //オブジェクトの追加
+
+    // 手前（赤）
+    GameObject obj2;
+    obj2.mesh = &m_mesh;
+    obj2.transform.position =
+        glm::vec3(0.0f, 0.0f, -5.0f);
+    obj2.material = &m_material;
+    obj2.rigidbody =
+        &m_rigidbody;
+
+    m_objects.push_back(obj2);
+
+    GameObject obj3;
+    obj3.mesh = &m_mesh;
+    obj3.transform.position =
+        glm::vec3(2.0f, 0.0f, -5.0f);
+    obj3.material = &m_material;
+    obj3.rigidbody =
+        &m_rigidbody;
+
+    m_objects.push_back(obj3);
+
+    m_objects[1].transform.parent =
+        &m_objects[0].transform;
+
     return true;
+}
+void Renderer::TimerSet(
+    Timer* timer
+)
+{
+    m_timer = timer;
 }
 void Renderer::Draw()
 {
-    Uint64 currentTicks = SDL_GetTicks();
+	float deltaTime = m_timer->GetDeltaTime(); //デルタタイムの取得
+    SDL_Log("Delta Time: %f", deltaTime);
 
-    float deltaTime =
-        (currentTicks - m_lastTicks) / 1000.0f;
-
-    m_lastTicks = currentTicks;
     float rotationSpeed = 1.0f;
 
     float mouseSensitivity = 0.05f;
 
+	//マウスの移動量を取得
     int mouseDeltaX = StateInput::GetMouseDeltaX();
     int mouseDeltaY = StateInput::GetMouseDeltaY();
 
@@ -175,7 +171,7 @@ void Renderer::Draw()
     if (m_camera.pitch < -89.0f)
         m_camera.pitch = -89.0f;
 
-
+	//カメラの前方向と右方向の計算
     float forwardX =
         std::cos(m_camera.pitch) *
         std::sin(m_camera.yaw);
@@ -191,37 +187,33 @@ void Renderer::Draw()
     float rightZ = std::sin(m_camera.yaw);
 
 
-    float moveSpeed = 0.2f;
+    float moveSpeed = 0.5f;
 
     if (StateInput::IsKeyDown(SDL_SCANCODE_W))
     {
         m_camera.position +=
-            m_camera.forward * moveSpeed;
+            m_camera.forward * moveSpeed * deltaTime; //デルタタイムを使った時間計算
     }
 
     if (StateInput::IsKeyDown(SDL_SCANCODE_S))
     {
         m_camera.position -=
-            m_camera.forward * moveSpeed;
+            m_camera.forward * moveSpeed * deltaTime;
     }
 
     if (StateInput::IsKeyDown(SDL_SCANCODE_A))
     {
         m_camera.position -=
-            m_camera.right * moveSpeed;
+            m_camera.right * moveSpeed * deltaTime;
     }
 
     if (StateInput::IsKeyDown(SDL_SCANCODE_D))
     {
         m_camera.position +=
-            m_camera.right * moveSpeed;
+            m_camera.right * moveSpeed * deltaTime;
     }
-
-
-    m_shader.Bind();
-
-    glm::mat4 view = m_camera.GetViewMatrix();
-    glm::mat4 proj =
+	glm::mat4 view = m_camera.GetViewMatrix(); //カメラ軸行列の取得
+	glm::mat4 proj = //投影行列の生成
         glm::perspective(
             glm::radians(60.0f),
             1280.0f / 720.0f,
@@ -229,30 +221,31 @@ void Renderer::Draw()
             100.0f
         );
 
-    m_shader.SetMat4("uView", view);
-    m_shader.SetMat4("uProj", proj);
+	m_shader.SetMat4("uView", view); //シェーダにカメラ軸行列を渡す
+	m_shader.SetMat4("uProj", proj); //シェーダに投影行列を渡す
 
     // 奥（青）
-    m_object.transform.position =
-        glm::vec3(-1, 0, -2);
 
-    glm::mat4 modelBack =
-        m_object.transform.GetMatrix();
-    m_shader.SetMat4("uModel", modelBack);
-    m_shader.SetVec3("uColor", 0.2f, 0.3f, 1.0f);
-    m_mesh.Draw();
+	for (GameObject& obj : m_objects) //オブジェクトの描写
+    {
+       glm::mat4 model =
+		   obj.transform.GetWorldMatrix(); //ワールド行列の取得
 
-    // 手前（赤）
-    m_object.transform.position =
-        glm::vec3(1, 0, -2);
-    glm::mat4 modelFront =
-        m_object.transform.GetMatrix();
-    m_shader.SetMat4("uModel", modelFront);
-    m_shader.SetVec3("uColor", 1.0f, 0.2f, 0.2f);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
+	   m_shader.SetMat4( //シェーダにワールド行列を渡す
+            "uModel",
+            model
+        );
 
-    m_mesh.Draw();
+		obj.material->shader->Use(); //シェーダの使用
+		obj.material->texture->Bind(); //テクスチャのバインド
+
+		obj.mesh->Draw(); //メッシュの描写
+    }
+    //テスト用
+    m_objects[0].transform.rotation.y +=
+        0.1f * deltaTime;
+
+
 }
 
 void Renderer::BeginFrame() //window描写
@@ -266,4 +259,9 @@ void Renderer::BeginFrame() //window描写
 void Renderer::EndFrame(Window& window)
 {
 	window.Present(); //window更新
+}
+std::vector<GameObject>&
+Renderer::GetObjects()
+{
+    return m_objects;
 }

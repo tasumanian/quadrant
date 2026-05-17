@@ -1,13 +1,13 @@
-#include "input.h"
+#include "EventInput.h"
 
-void Input::BeginFrame()
+void EventInput::BeginFrame()
 {
     m_quitRequested = false;
     m_previousKeys = m_currentKeys;
 }
 
 //入力イベントの監視
-void Input::ProcessEvent(const SDL_Event& event) 
+void EventInput::ProcessEvent(const SDL_Event& event)
 {
     if (event.type == SDL_EVENT_QUIT)
     {
@@ -25,7 +25,7 @@ void Input::ProcessEvent(const SDL_Event& event)
     }
 }
 
-bool Input::GetKeyState(const std::unordered_map<SDL_Keycode, bool>& map, SDL_Keycode key) const
+bool EventInput::GetKeyState(const std::unordered_map<SDL_Keycode, bool>& map, SDL_Keycode key) const
 {
     auto it = map.find(key);
     if (it != map.end())
@@ -37,24 +37,24 @@ bool Input::GetKeyState(const std::unordered_map<SDL_Keycode, bool>& map, SDL_Ke
 }
 
 //押し込み
-bool Input::IsKeyPressed(SDL_Keycode key) const
+bool EventInput::IsKeyPressed(SDL_Keycode key) const
 {
     return GetKeyState(m_currentKeys, key) && !GetKeyState(m_previousKeys, key);
 }
 
 //長押し
-bool Input::IsKeyHeld(SDL_Keycode key) const
+bool EventInput::IsKeyHeld(SDL_Keycode key) const
 {
     return GetKeyState(m_currentKeys, key);
 }
 
 //離す
-bool Input::IsKeyReleased(SDL_Keycode key) const
+bool EventInput::IsKeyReleased(SDL_Keycode key) const
 {
     return !GetKeyState(m_currentKeys, key) && GetKeyState(m_previousKeys, key);
 }
 
-bool Input::QuitRequested() const
+bool EventInput::QuitRequested() const
 {
     return m_quitRequested;
 }

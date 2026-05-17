@@ -137,35 +137,41 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="addon\glad\src\glad.c" />
-    <ClCompile Include="app.cpp" />
-    <ClCompile Include="camera.cpp" />
-    <ClCompile Include="gameobject.cpp" />
-    <ClCompile Include="input.cpp" />
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="EventInput.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mat4.cpp" />
-    <ClCompile Include="mesh.cpp" />
-    <ClCompile Include="renderer.cpp" />
-    <ClCompile Include="shader.cpp" />
-    <ClCompile Include="stateinput.cpp" />
-    <ClCompile Include="timer.cpp" />
-    <ClCompile Include="transform.cpp" />
-    <ClCompile Include="window.cpp" />
+    <ClCompile Include="Mat4.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="StateInput.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
-    <ClInclude Include="app.h" />
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="gameobject.h" />
-    <ClInclude Include="input.h" />
-    <ClInclude Include="mat4.h" />
-    <ClInclude Include="mesh.h" />
-    <ClInclude Include="renderer.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="shader.h" />
-    <ClInclude Include="stateinput.h" />
-    <ClInclude Include="timer.h" />
-    <ClInclude Include="transform.h" />
-    <ClInclude Include="window.h" />
+    <ClInclude Include="App.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="EventInput.h" />
+    <ClInclude Include="Mat4.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="Rigidbody.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="StateInput.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SDL3-3.4.8\VisualC\SDL\SDL.vcxproj" />

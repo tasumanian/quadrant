@@ -10,6 +10,8 @@ class Shader
 public:
     bool Create(const char* vertexSource, const char* fragmentSource);
     void Bind() const;
+    void Use() const;
+    void SetInt(const char* name,int value) const;
     void SetVec3(const char* name, float x, float y, float z) const;
     void SetMat4(const char* name, const glm::mat4& mat) const;
     GLuint GetProgram() const;

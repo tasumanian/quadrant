@@ -44,7 +44,7 @@ bool Shader::Create(const char* vertexSource, const char* fragmentSource)
     glAttachShader(m_program, fs);//programにfsを統合
     SDL_Log("Attached Fragment Shader");
 
-    glLinkProgram(m_program);
+	glLinkProgram(m_program); //programをリンクs
     SDL_Log("Link requested");
 
     glDeleteShader(vs);
@@ -57,21 +57,13 @@ GLuint Shader::GetProgram() const
 {
     return m_program;
 }
-
-void Shader::Bind() const
+void Shader::Use() const
 {
-    glUseProgram(m_program);
-
-    GLint current = 0;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &current);
-
-    //programが間違ってないか確認s
-    SDL_Log("Current Program = %d", current);
+	glUseProgram(m_program); //programを使用
 }
-
 void Shader::SetVec3(const char* name, float x, float y, float z) const
 {
-    int location = glGetUniformLocation(m_program, name);
+	int location = glGetUniformLocation(m_program, name); // シェーダ内のuniform変数の場所を取得
     glUniform3f(location, x, y, z);
 }
 
@@ -95,15 +87,15 @@ void Shader::SetMat4(const char* name, const glm::mat4& mat) const
 bool Shader::CheckShader(unsigned int shader, unsigned int type) const
 {
     int success = 0;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success); //コンパイルの成功を取得s
 
     if (!success)
     {
         int length = 0;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length); //エラーログの長さを取得s
 
         char* infoLog = new char[length];
-        glGetShaderInfoLog(shader, length, nullptr, infoLog);
+		glGetShaderInfoLog(shader, length, nullptr, infoLog); //エラーログを取得s
 
         SDL_Log("%s Shader Compile Error:\n%s", GetShaderTypeName(type), infoLog);
 
