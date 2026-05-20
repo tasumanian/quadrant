@@ -10,9 +10,11 @@ public:
 
     float mass;
 
+    const float gravity = 9.8f;
+
     bool useGravity;
 
 public:
-
+    void AdaptGravity(float dt);
     Rigidbody();
 };

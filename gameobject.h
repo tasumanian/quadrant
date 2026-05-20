@@ -4,6 +4,8 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Rigidbody.h"
+#include "BoxCollider.h"
+#include <string>
 
 class GameObject
 {
@@ -15,6 +17,10 @@ public:
     Material* material;
 
     Mesh* mesh;
+
+	BoxCollider* boxCollider;
+
+    std::string name;
 
 public:
 

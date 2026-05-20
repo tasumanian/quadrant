@@ -7,6 +7,7 @@
 #include "timer.h"
 #include "GameObject.h"
 #include "stateinput.h"
+#include "BoxCollider.h"
 #include <glad/glad.h>
 #include <cmath>
 #include <vector>
@@ -27,6 +28,7 @@ class Renderer
 		Rigidbody m_rigidbody;
 		Material m_material;
 		Shader m_shader;
+		BoxCollider m_boxCollider;
 		Timer* m_timer;
 		std::vector<GameObject> m_objects; //シーケンスコンテナの一種
 		Mesh m_mesh;
