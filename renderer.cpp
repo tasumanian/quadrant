@@ -107,11 +107,11 @@ bool Renderer::Initialize(Window& window)
     GameObject obj1; //オブジェクトの生成
     obj1.mesh = &m_mesh;
     obj1.transform.position =
-        glm::vec3(-2.0f, 3.0f, -5.0f);
+        glm::vec3(0.0f, 3.0f, 0.0f);
     obj1.material = &m_material;
     obj1.rigidbody =
-        &m_rigidbody;
-	obj1.boxCollider = &m_boxCollider;
+        m_rigidbody;
+	obj1.boxCollider = m_boxCollider;
     obj1.name = "Cube";
 
     m_objects.push_back(obj1); //オブジェクトの追加
@@ -136,14 +136,14 @@ bool Renderer::Initialize(Window& window)
 		glm::vec3(5.0f, 1.0f, 5.0f);
     obj3.material = &m_material;
     obj3.rigidbody =
-        &m_rigidbody;
-    obj3.boxCollider = &m_boxCollider;
+        m_rigidbody;
+    obj3.rigidbody.useGravity = false;
+    obj3.boxCollider = m_boxCollider;
 	obj3.name = "Floor";
-
     m_objects.push_back(obj3);
 
-    m_objects[1].transform.parent =
-        &m_objects[0].transform;
+    //m_objects[1].transform.parent =
+    //    &m_objects[0].transform;
 
     return true;
 }
@@ -226,8 +226,7 @@ void Renderer::Draw()
             1280.0f / 720.0f,
             0.1f,
             100.0f
-        );
-
+        );\
 	m_shader.SetMat4("uView", view); //シェーダにカメラ軸行列を渡す
 	m_shader.SetMat4("uProj", proj); //シェーダに投影行列を渡す
 

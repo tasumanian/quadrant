@@ -10,7 +10,7 @@ public:
 
     float mass;
 
-    const float gravity = 9.8f;
+    static constexpr float gravity = 9.8f;
 
     bool useGravity;
 

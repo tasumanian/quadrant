@@ -5,22 +5,22 @@ bool Physics::CheckAABB(const GameObject& obj1, const GameObject& obj2)
     glm::vec3 aMin =
         obj1.transform.position
         -
-        obj1.boxCollider->size * 0.5f;
+        obj1.boxCollider.size * 0.5f;
 
     glm::vec3 aMax =
         obj1.transform.position
         +
-        obj1.boxCollider->size * 0.5f;
+        obj1.boxCollider.size * 0.5f;
 
     glm::vec3 bMin =
         obj2.transform.position
         -
-        obj2.boxCollider->size * 0.5f;
+        obj2.boxCollider.size * 0.5f;
 
     glm::vec3 bMax =
         obj2.transform.position
         +
-        obj2.boxCollider->size * 0.5f;
+        obj2.boxCollider.size * 0.5f;
 
 	return //衝突確認
            //AとBの座標の最大点と最小点を比較して、重なっているかどうかを確認

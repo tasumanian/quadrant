@@ -3,7 +3,7 @@
 Rigidbody::Rigidbody()
 {
     velocity =
-        glm::vec3(1.0f);
+        glm::vec3(0.0f);
 
     mass = 1.0f;
 

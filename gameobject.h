@@ -10,7 +10,7 @@
 class GameObject
 {
 public:
-	Rigidbody* rigidbody;
+	Rigidbody rigidbody;
 
     Transform transform;
 
@@ -18,7 +18,7 @@ public:
 
     Mesh* mesh;
 
-	BoxCollider* boxCollider;
+	BoxCollider boxCollider;
 
     std::string name;
 
