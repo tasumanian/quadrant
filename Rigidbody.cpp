@@ -8,6 +8,8 @@ Rigidbody::Rigidbody()
     mass = 1.0f;
 
     useGravity = true;
+
+	isGrounded = false;
 }
 void Rigidbody::AdaptGravity(float dt)
 {

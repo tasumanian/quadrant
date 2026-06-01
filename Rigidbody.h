@@ -14,6 +14,8 @@ public:
 
     bool useGravity;
 
+    bool isGrounded;
+
 public:
     void AdaptGravity(float dt);
     Rigidbody();

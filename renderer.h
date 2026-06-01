@@ -8,6 +8,7 @@
 #include "GameObject.h"
 #include "stateinput.h"
 #include "BoxCollider.h"
+#include "CharacterController.h"
 #include <glad/glad.h>
 #include <cmath>
 #include <vector>
@@ -37,4 +38,6 @@ class Renderer
 		StateInput m_stateinput;
 		Window* m_window = nullptr;
 		Uint64 m_lastTicks = 0;
+		CharacterController m_characterController;
+		
 };

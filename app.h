@@ -4,6 +4,7 @@
 #include "EventInput.h"
 #include "Renderer.h"
 #include "Physics.h"
+#include "FixedUpdate.h"
 #include <math.h>
 
 class App
@@ -11,7 +12,6 @@ class App
 	public:
 		App();
 		int Run();
-		void FixedUpdate(float dt);
 
 	private:
 		bool m_running;
@@ -20,4 +20,5 @@ class App
 		EventInput m_input;
 		Renderer m_renderer;
 		Physics m_physics;
+		FixedUpdate m_fixedUpdate;
 };
