@@ -8,6 +8,7 @@
 #include "GameObject.h"
 #include "stateinput.h"
 #include "BoxCollider.h"
+#include "Scene.h"
 #include "CharacterController.h"
 #include <glad/glad.h>
 #include <cmath>
@@ -20,19 +21,16 @@ class Renderer
 	public:
 		bool Initialize(Window& window);
 		void BeginFrame();
-		void Draw();
+		void Draw(const Scene& scene);
 		void EndFrame(Window& window);
 		void TimerSet(Timer* timer);
-		std::vector<GameObject>& GetObjects();
 
 	private:
 		Rigidbody m_rigidbody;
-		Material m_material;
-		Shader m_shader;
 		BoxCollider m_boxCollider;
 		Timer* m_timer;
 		std::vector<GameObject> m_objects; //シーケンスコンテナの一種
-		Mesh m_mesh;
+		Mesh* m_mesh;
 		Texture m_texture;
 		Camera m_camera;
 		StateInput m_stateinput;

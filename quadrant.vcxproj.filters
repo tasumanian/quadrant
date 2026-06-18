@@ -72,10 +72,7 @@
     <ClCompile Include="BoxCollider.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Physics.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="FixedUpdate.cpp">
+    <ClCompile Include="PhysicsSystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="CharacterController.cpp">
@@ -140,10 +137,7 @@
     <ClInclude Include="BoxCollider.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Physics.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="FixedUpdate.h">
+    <ClInclude Include="PhysicsSystem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="CharacterController.h">

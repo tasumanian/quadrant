@@ -7,10 +7,7 @@ class Material
 {
 public:
 
-    Shader* shader;
-	Texture* texture;
+    Shader shader;
+	Texture texture;
 
-public:
-
-    Material();
 };
