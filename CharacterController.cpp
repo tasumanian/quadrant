@@ -3,72 +3,70 @@
 
 #include <SDL3/SDL.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/constants.hpp>
 
 CharacterController::CharacterController()
 {
     moveSpeed = 3.0f;
 }
-void CharacterController::Update(
-    GameObject& player,
-    float yaw,
-    float deltaTime
-)
+void CharacterController::CameraUpdate( Camera& camera,float deltaTime)
 {
-    glm::vec3 moveDir(0.0f);
 
-    glm::vec3 forward =
-    {
-        std::sin(yaw),
-        0.0f,
-        -std::cos(yaw)
-    };
+    float rotationSpeed = 1.0f;
+    float mouseSensitivity = 0.05f;
 
-    glm::vec3 right =
-    {
-        std::cos(yaw),
-        0.0f,
-        std::sin(yaw)
-    };
+    //マウスの移動量を取得s
+    int mouseDeltaX = StateInput::GetMouseDeltaX();
+    int mouseDeltaY = StateInput::GetMouseDeltaY();
+
+    camera.yaw -= mouseDeltaX * mouseSensitivity;
+
+    camera.pitch -=
+        mouseDeltaY * mouseSensitivity;
+
+    if (camera.pitch > 89.0f)
+        camera.pitch = 89.0f;
+
+    if (camera.pitch < -89.0f)
+        camera.pitch = -89.0f;
+
+    glm::quat yawRotation =
+        glm::angleAxis(
+            glm::radians(camera.yaw),
+            glm::vec3(0, 1, 0)
+        );
+
+    glm::quat pitchRotation =
+        glm::angleAxis(
+            glm::radians(camera.pitch),
+            glm::vec3(1, 0, 0)
+        );
+
+    camera.transform.rotation =
+        yawRotation * pitchRotation;
+
+    float moveSpeed = 0.8f;
 
     if (StateInput::IsKeyDown(SDL_SCANCODE_W))
     {
-        moveDir += forward;
+        camera.transform.position +=
+            camera.transform.Forward() * moveSpeed * deltaTime; //デルタタイムを使った時間計算
     }
 
     if (StateInput::IsKeyDown(SDL_SCANCODE_S))
     {
-        moveDir -= forward;
-    }
-
-    if (StateInput::IsKeyDown(SDL_SCANCODE_D))
-    {
-        moveDir += right;
+        camera.transform.position +=
+            camera.transform.Back() * moveSpeed * deltaTime;
     }
 
     if (StateInput::IsKeyDown(SDL_SCANCODE_A))
     {
-        moveDir -= right;
-    }
-    if (
-        StateInput::IsKeyDown(
-            SDL_SCANCODE_SPACE
-        )
-        &&
-        player.rigidbody.isGrounded
-        )
-    {
-        player.rigidbody.velocity.y =
-            5.0f;
-    }
-    if (glm::length(moveDir) > 0.0f)
-    {
-        moveDir =
-            glm::normalize(moveDir);
+        camera.transform.position +=
+            camera.transform.Left() * moveSpeed * deltaTime;
     }
 
-    player.transform.position +=
-        moveDir *
-        moveSpeed *
-        deltaTime;
+    if (StateInput::IsKeyDown(SDL_SCANCODE_D))
+    {
+        camera.transform.position +=
+            camera.transform.Right() * moveSpeed * deltaTime;
+    }
 }
