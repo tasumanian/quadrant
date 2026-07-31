@@ -6,8 +6,14 @@
 class Material
 {
 public:
+	Material(Shader* shader,Texture* texture);
 
-    Shader shader;
-	Texture texture;
+private:
+	Shader* shader;
+	Texture* texture;
+
+public:
+	Shader* GetShader();
+	Texture* GetTexture();
 
 };

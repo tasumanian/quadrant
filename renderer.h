@@ -19,20 +19,16 @@ class Window;
 class Renderer
 {
 	public:
-		bool Initialize(Window& window);
+		bool Initialize(Window& window,Timer& timer);
 		void BeginFrame();
-		void Draw(const Scene& scene);
+		void Draw(const Scene& scene,const Camera& camera);
 		void EndFrame(Window& window);
-		void TimerSet(Timer* timer);
 
 	private:
 		Rigidbody m_rigidbody;
 		BoxCollider m_boxCollider;
 		Timer* m_timer;
 		std::vector<GameObject> m_objects; //シーケンスコンテナの一種
-		Mesh* m_mesh;
-		Texture m_texture;
-		Camera m_camera;
 		StateInput m_stateinput;
 		Window* m_window = nullptr;
 		Uint64 m_lastTicks = 0;

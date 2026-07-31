@@ -16,6 +16,15 @@
     <Filter Include="external">
       <UniqueIdentifier>{e00f2130-c826-439e-b192-103e086950de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="external\imgui">
+      <UniqueIdentifier>{b8fe7fc5-a6b6-423b-962d-b96a2a28b786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\imgui\backends">
+      <UniqueIdentifier>{030b07d7-40cc-4eda-8e57-3db6fa27591c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\header">
+      <UniqueIdentifier>{1331fd46-67b2-47ac-b6a1-559c64486f02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -81,6 +90,33 @@
     <ClCompile Include="Scene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="addon\imgui-master\imgui_demo.cpp">
+      <Filter>external\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="addon\imgui-master\imgui_draw.cpp">
+      <Filter>external\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="addon\imgui-master\imgui_tables.cpp">
+      <Filter>external\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="addon\imgui-master\imgui_widgets.cpp">
+      <Filter>external\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="addon\imgui-master\backends\imgui_impl_opengl3.cpp">
+      <Filter>external\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="addon\imgui-master\backends\imgui_impl_sdl3.cpp">
+      <Filter>external\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="addon\imgui-master\imgui.cpp">
+      <Filter>external\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -119,9 +155,6 @@
     <ClInclude Include="StateInput.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Downloads\stb_image.h">
-      <Filter>external</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -144,6 +177,42 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="addon\imgui-master\imgui.h">
+      <Filter>external\header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Downloads\stb_image.h">
+      <Filter>external\header</Filter>
+    </ClInclude>
+    <ClInclude Include="addon\imgui-master\imgui_internal.h">
+      <Filter>external\header</Filter>
+    </ClInclude>
+    <ClInclude Include="addon\imgui-master\imconfig.h">
+      <Filter>external\header</Filter>
+    </ClInclude>
+    <ClInclude Include="addon\imgui-master\imstb_rectpack.h">
+      <Filter>external\header</Filter>
+    </ClInclude>
+    <ClInclude Include="addon\imgui-master\imstb_textedit.h">
+      <Filter>external\header</Filter>
+    </ClInclude>
+    <ClInclude Include="addon\imgui-master\imstb_truetype.h">
+      <Filter>external\header</Filter>
+    </ClInclude>
+    <ClInclude Include="addon\imgui-master\backends\imgui_impl_opengl3.h">
+      <Filter>external\header</Filter>
+    </ClInclude>
+    <ClInclude Include="addon\imgui-master\backends\imgui_impl_sdl3.h">
+      <Filter>external\header</Filter>
+    </ClInclude>
+    <ClInclude Include="addon\glm-master\glm\glm.hpp">
+      <Filter>external</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

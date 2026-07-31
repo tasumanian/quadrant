@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Camera.h"
 class CharacterController
 {
 public:
@@ -8,9 +9,8 @@ public:
 
     CharacterController();
 
-    void Update(
-        GameObject& player,
-        float yaw,
+    void CameraUpdate(
+        Camera& camera,
         float deltaTime
     );
 

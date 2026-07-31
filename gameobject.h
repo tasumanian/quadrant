@@ -14,7 +14,7 @@ public:
 
     Transform transform;
 
-    Material material;
+    Material* material;
 
     Mesh* mesh;
 

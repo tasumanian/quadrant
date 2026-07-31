@@ -5,6 +5,9 @@
 #include "Renderer.h"
 #include "PhysicsSystem.h"
 #include "Scene.h"
+#include "CharacterController.h"
+#include "ResourceManager.h"
+#include "Editor.h"
 #include <math.h>
 
 class App
@@ -19,13 +22,13 @@ class App
 		Window m_window;
 		Timer m_timer;
 		EventInput m_input;
-		Shader m_defaultshader;
-		Texture m_defaulttexture;
 		Renderer m_renderer;
 		Scene m_scene;
+		Camera m_camera;
 		Rigidbody m_rigidbody;
-		Material m_defaultmaterial;
-		Mesh m_mesh;
 		PhysicsSystem m_physicsSystem;
 		BoxCollider m_boxCollider;
+		CharacterController m_chacacterController;
+		ResourceManager m_resourceManager;
+		Editor m_editor;
 };
