@@ -3,7 +3,6 @@
 #include <SDL3/SDL_mouse.h>
 
 
-
 bool Renderer::Initialize(Window& window, Timer& timer)
 {
     SDL_Log("Renderer Initialize");
@@ -26,6 +25,7 @@ void Renderer::Draw(const Scene& scene ,const Camera& camera )
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
     // 奥（青）
+
 
 	for (GameObject obj : scene.GetObjects()) //オブジェクトの描写
     {

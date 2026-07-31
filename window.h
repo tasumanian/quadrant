@@ -10,6 +10,7 @@ class Window
 		bool Create(const char* tutle, int width, int height);
 		void Present();
 		SDL_Window* GetSDLWindow() const;
+		SDL_GLContext GetGlContext() const;
 
 	private:
 		SDL_Window* m_window;
