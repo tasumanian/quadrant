@@ -1,57 +1,102 @@
 #include "stateinput.h"
 
-#include <SDL3/SDL.h>
+std::array<bool, SDL_SCANCODE_COUNT> StateInput::m_currentKeys{};
+std::array<bool, SDL_SCANCODE_COUNT> StateInput::m_previousKeys{};
 
-bool StateInput::s_quit = false;
+std::array<bool, 8> StateInput::m_currentMouse{};
+std::array<bool, 8> StateInput::m_previousMouse{};
 
-int StateInput::s_mouseDeltaX = 0;
-int StateInput::s_mouseDeltaY = 0;
+glm::vec2 StateInput::m_mousePosition{};
+glm::vec2 StateInput::m_previousMousePosition{};
 
 void StateInput::Update()
 {
-    SDL_Event event;
-    s_mouseDeltaX = 0;
-    s_mouseDeltaY = 0;
+    m_previousKeys = m_currentKeys;
 
-    while (SDL_PollEvent(&event))
+    m_previousMouse = m_currentMouse;
+
+    m_previousMousePosition =
+        m_mousePosition;
+}
+void StateInput::ProcessEvent(const SDL_Event& event)
+{
+    switch (event.type)
     {
-        if (event.type == SDL_EVENT_QUIT)
-        {
-            s_quit = true;
-        }
+    case SDL_EVENT_KEY_DOWN:
+
+        m_currentKeys[event.key.scancode] = true;
+
+        break;
+
+    case SDL_EVENT_KEY_UP:
+
+        m_currentKeys[event.key.scancode] = false;
+
+        break;
+
+    case SDL_EVENT_MOUSE_BUTTON_DOWN:
+
+        m_currentMouse[event.button.button] = true;
+
+        break;
+
+    case SDL_EVENT_MOUSE_BUTTON_UP:
+
+        m_currentMouse[event.button.button] = false;
+
+        break;
+
+    case SDL_EVENT_MOUSE_MOTION:
+
+        m_mousePosition.x =
+            (float)event.motion.x;
+
+        m_mousePosition.y =
+            (float)event.motion.y;
+
+        break;
     }
-    UpdateMouse();
 }
 
-void StateInput::UpdateMouse()
+bool StateInput::GetKey(SDL_Scancode key)
 {
-    float x;
-    float y;
-
-    SDL_GetRelativeMouseState(&x, &y);
-
-    s_mouseDeltaX = (int)x;
-    s_mouseDeltaY = (int)y;
+    return m_currentKeys[key];
 }
-
-bool StateInput::IsKeyDown(int scancode)
+bool StateInput::GetKeyDown(SDL_Scancode key)
 {
-    const bool* keyboard =
-        SDL_GetKeyboardState(nullptr);
-
-    return keyboard[scancode];
+    return
+        m_currentKeys[key] &&
+        !m_previousKeys[key];
 }
-
-bool StateInput::QuitRequested()
+bool StateInput::GetKeyUp(SDL_Scancode key)
 {
-    return s_quit;
+    return
+        !m_currentKeys[key] &&
+        m_previousKeys[key];
 }
-int StateInput::GetMouseDeltaX()
+bool StateInput::GetMouseButton(Uint8 button)
 {
-    return s_mouseDeltaX;
+    return m_currentMouse[button];
 }
-
-int StateInput::GetMouseDeltaY()
+bool StateInput::GetMouseButtonDown(Uint8 button)
 {
-    return s_mouseDeltaY;
+    return
+        m_currentMouse[button] &&
+        !m_previousMouse[button];
+}
+bool StateInput::GetMouseButtonUp(Uint8 button)
+{
+    return
+        !m_currentMouse[button] &&
+        m_previousMouse[button];
+}
+glm::vec2 StateInput::GetMousePosition()
+{
+    return m_mousePosition;
+}
+glm::vec2 StateInput::GetMouseDelta()
+{
+    return
+        m_mousePosition -
+        m_previousMousePosition;
 }

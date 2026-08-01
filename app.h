@@ -19,6 +19,7 @@ class App
 
 	private:
 		bool m_running;
+		bool m_editorMode;
 		Window m_window;
 		Timer m_timer;
 		EventInput m_input;

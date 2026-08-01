@@ -27,6 +27,13 @@ void Editor::Draw(Scene* scene)
     DrawHierarchy(scene);
     DrawInspector(scene);
 
+    if (ImGui::BeginMainMenuBar())
+    {
+        ImGui::Text("Quadrant Engine");
+
+        ImGui::EndMainMenuBar();
+    }
+
     ImGui::Render();
 
     ImGui_ImplOpenGL3_RenderDrawData(
@@ -34,6 +41,16 @@ void Editor::Draw(Scene* scene)
 }
 void Editor::DrawHierarchy(Scene* scene)
 {
+    ImGui::SetNextWindowPos(
+        ImVec2(0, 20),
+        ImGuiCond_Once
+    );
+
+    ImGui::SetNextWindowSize(
+        ImVec2(250, 500),
+        ImGuiCond_Once
+    );
+
     ImGui::Begin("Hierarchy");
 
     auto& objects = scene->GetObjects();
@@ -51,10 +68,21 @@ void Editor::DrawHierarchy(Scene* scene)
 }
 void Editor::DrawInspector(Scene* scene)
 {
+    ImGuiIO& io = ImGui::GetIO();
+
+    ImGui::SetNextWindowPos(
+        ImVec2(io.DisplaySize.x - 300, 20),
+        ImGuiCond_Once
+    );
+
+    ImGui::SetNextWindowSize(
+        ImVec2(300, 500),
+        ImGuiCond_Once
+    );
+
+
     ImGui::Begin("Inspector");
 
-    ImGui::Text("Hello Engine!");
-    /*
     auto& objects = scene->GetObjects();
 
     if (m_selectedObject >= 0 &&
@@ -71,7 +99,7 @@ void Editor::DrawInspector(Scene* scene)
 
         DrawBoxCollider(obj);
     }
-    */
+
     ImGui::End();
 }
 void Editor::DrawTransform(GameObject& obj)

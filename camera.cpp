@@ -9,6 +9,8 @@ glm::mat4 Camera::GetViewMatrix() const
 Camera::Camera()
 {
     //‰Šúİ’è
+    //yaw = 0.0f;
+	//pitch = 0.0f;
     transform.position = glm::vec3(0.0f, 0.0f, 3.0f);
 
     transform.rotation.z = -90.0f;

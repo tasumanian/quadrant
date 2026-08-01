@@ -2,6 +2,7 @@
 
 #include "Shader.h"
 #include "Texture.h"
+#include <string>
 
 class Material
 {
@@ -15,5 +16,7 @@ private:
 public:
 	Shader* GetShader();
 	Texture* GetTexture();
+
+	std::string name;
 
 };
