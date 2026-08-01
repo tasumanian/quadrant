@@ -15,13 +15,13 @@ void CharacterController::CameraUpdate( Camera& camera,float deltaTime)
     float mouseSensitivity = 0.05f;
 
     //マウスの移動量を取得s
-    int mouseDeltaX = StateInput::GetMouseDeltaX();
-    int mouseDeltaY = StateInput::GetMouseDeltaY();
+	glm::vec2 mouseDelta =
+		StateInput::GetMouseDelta();
 
-    camera.yaw -= mouseDeltaX * mouseSensitivity;
+    camera.yaw -= mouseDelta.x * mouseSensitivity;
 
     camera.pitch -=
-        mouseDeltaY * mouseSensitivity;
+        mouseDelta.y * mouseSensitivity;
 
     if (camera.pitch > 89.0f)
         camera.pitch = 89.0f;
@@ -46,25 +46,25 @@ void CharacterController::CameraUpdate( Camera& camera,float deltaTime)
 
     float moveSpeed = 0.8f;
 
-    if (StateInput::IsKeyDown(SDL_SCANCODE_W))
+    if (StateInput::GetKey(SDL_SCANCODE_W))
     {
         camera.transform.position +=
             camera.transform.Forward() * moveSpeed * deltaTime; //デルタタイムを使った時間計算
     }
 
-    if (StateInput::IsKeyDown(SDL_SCANCODE_S))
+    if (StateInput::GetKey(SDL_SCANCODE_S))
     {
         camera.transform.position +=
             camera.transform.Back() * moveSpeed * deltaTime;
     }
 
-    if (StateInput::IsKeyDown(SDL_SCANCODE_A))
+    if (StateInput::GetKey(SDL_SCANCODE_A))
     {
         camera.transform.position +=
             camera.transform.Left() * moveSpeed * deltaTime;
     }
 
-    if (StateInput::IsKeyDown(SDL_SCANCODE_D))
+    if (StateInput::GetKey(SDL_SCANCODE_D))
     {
         camera.transform.position +=
             camera.transform.Right() * moveSpeed * deltaTime;

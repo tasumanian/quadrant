@@ -112,7 +112,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\SDL3-3.4.8\include;C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\glad\include;C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\glm-master;addon\imgui-master;addon\imgui-master\backends;addon\glm-master</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>addon\glad\include;addon\glm-master;addon\imgui-master\backends;addon\imgui-master;addon\SDL3-3.4.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 class Mesh
 {
@@ -19,6 +20,8 @@ public:
         float ny;
         float nz;
     };
+
+    std::string name;
 
 private:
     unsigned int m_vao = 0;

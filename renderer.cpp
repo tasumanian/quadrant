@@ -11,7 +11,6 @@ bool Renderer::Initialize(Window& window, Timer& timer)
     //カメラの座標を手前にしておく
     m_timer = &timer;
     glEnable(GL_DEPTH_TEST); //深度比較
-    SDL_SetWindowRelativeMouseMode(window.GetSDLWindow(), true);
     m_lastTicks = SDL_GetTicks();
 
     return true;
@@ -25,9 +24,7 @@ void Renderer::Draw(const Scene& scene ,const Camera& camera )
 	glm::mat4 proj = glm::perspective(glm::radians(60.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
     // 奥（青）
-
-
-	for (GameObject obj : scene.GetObjects()) //オブジェクトの描写
+	for (const GameObject& obj : scene.GetObjects()) //オブジェクトの描写
     {
 
         obj.material->GetShader()->SetMat4("uView", view); //シェーダにカメラ軸行列を渡す
@@ -43,11 +40,6 @@ void Renderer::Draw(const Scene& scene ,const Camera& camera )
 
 		obj.mesh->Draw(); //メッシュの描写
     }
-    //テスト用
-   // m_objects[0].transform.rotation.y +=
-   //     0.1f * deltaTime;
-
-
 }
 
 void Renderer::BeginFrame() //window描写

@@ -7,4 +7,5 @@ public:
 	BoxCollider();
 
 	glm::vec3 size;
+
 };
