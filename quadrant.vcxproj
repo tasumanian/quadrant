@@ -112,7 +112,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>addon\glad\include;addon\glm-master;addon\imgui-master\backends;addon\imgui-master;addon\SDL3-3.4.8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>addon\glad\include;addon\glm-master;addon\imgui-master\backends;addon\imgui-master;addon\SDL3-3.4.8\include;Codes\Source;Codes\Header;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,28 +157,32 @@
     <ClCompile Include="addon\imgui-master\imgui_draw.cpp" />
     <ClCompile Include="addon\imgui-master\imgui_tables.cpp" />
     <ClCompile Include="addon\imgui-master\imgui_widgets.cpp" />
-    <ClCompile Include="App.cpp" />
-    <ClCompile Include="BoxCollider.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CharacterController.cpp" />
-    <ClCompile Include="Editor.cpp" />
-    <ClCompile Include="PhysicsSystem.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="EventInput.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mat4.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Rigidbody.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="StateInput.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="Codes\Source\Component\BoxCollider.cpp" />
+    <ClCompile Include="Codes\Source\Component\CameraComponent.cpp" />
+    <ClCompile Include="Codes\Source\Component\CharacterController.cpp" />
+    <ClCompile Include="Codes\Source\Component\MeshRenderer.cpp" />
+    <ClCompile Include="Codes\Source\Component\PhysicsSystem.cpp" />
+    <ClCompile Include="Codes\Source\Component\Rigidbody.cpp" />
+    <ClCompile Include="Codes\Source\Component\transform.cpp" />
+    <ClCompile Include="Codes\Source\Core\app.cpp" />
+    <ClCompile Include="Codes\Source\Core\EventInput.cpp" />
+    <ClCompile Include="Codes\Source\Core\main.cpp" />
+    <ClCompile Include="Codes\Source\Core\mat4.cpp" />
+    <ClCompile Include="Codes\Source\Core\stateinput.cpp" />
+    <ClCompile Include="Codes\Source\Core\timer.cpp" />
+    <ClCompile Include="Codes\Source\Core\window.cpp" />
+    <ClCompile Include="Codes\Source\Editor\Editor.cpp" />
+    <ClCompile Include="Codes\Source\ResourceManager\CameraSystem.cpp" />
+    <ClCompile Include="Codes\Source\ResourceManager\ComponentSystem.cpp" />
+    <ClCompile Include="Codes\Source\ResourceManager\gameobject.cpp" />
+    <ClCompile Include="Codes\Source\ResourceManager\Material.cpp" />
+    <ClCompile Include="Codes\Source\ResourceManager\mesh.cpp" />
+    <ClCompile Include="Codes\Source\ResourceManager\Ray.cpp" />
+    <ClCompile Include="Codes\Source\ResourceManager\renderer.cpp" />
+    <ClCompile Include="Codes\Source\ResourceManager\ResourceManager.cpp" />
+    <ClCompile Include="Codes\Source\ResourceManager\Scene.cpp" />
+    <ClCompile Include="Codes\Source\ResourceManager\shader.cpp" />
+    <ClCompile Include="Codes\Source\ResourceManager\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Downloads\stb_image.h" />
@@ -191,28 +195,37 @@
     <ClInclude Include="addon\imgui-master\imstb_rectpack.h" />
     <ClInclude Include="addon\imgui-master\imstb_textedit.h" />
     <ClInclude Include="addon\imgui-master\imstb_truetype.h" />
-    <ClInclude Include="App.h" />
-    <ClInclude Include="BoxCollider.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="CharacterController.h" />
-    <ClInclude Include="Editor.h" />
-    <ClInclude Include="PhysicsSystem.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="EventInput.h" />
-    <ClInclude Include="Mat4.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="Rigidbody.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="StateInput.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="Codes\Header\Component\BoxCollider.h" />
+    <ClInclude Include="Codes\Header\Component\CameraComponent.h" />
+    <ClInclude Include="Codes\Header\Component\CharacterController.h" />
+    <ClInclude Include="Codes\Header\Component\Component.h" />
+    <ClInclude Include="Codes\Header\Component\ComponentRegistry.h" />
+    <ClInclude Include="Codes\Header\Component\Components.h" />
+    <ClInclude Include="Codes\Header\Component\MeshRenderer.h" />
+    <ClInclude Include="Codes\Header\Component\Rigidbody.h" />
+    <ClInclude Include="Codes\Header\Component\transform.h" />
+    <ClInclude Include="Codes\Header\Core\app.h" />
+    <ClInclude Include="Codes\Header\Core\EventInput.h" />
+    <ClInclude Include="Codes\Header\Core\mat4.h" />
+    <ClInclude Include="Codes\Header\Core\stateinput.h" />
+    <ClInclude Include="Codes\Header\Core\timer.h" />
+    <ClInclude Include="Codes\Header\Core\window.h" />
+    <ClInclude Include="Codes\Header\Editor\Editor.h" />
+    <ClInclude Include="Codes\Header\Editor\EditorCameraController.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\CameraSystem.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\ComponentSystem.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\gameobject.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\Material.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\mesh.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\PhysicsSystem.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\Ray.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\renderer.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\resource.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\ResourceManager.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\Scene.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\shader.h" />
+    <ClInclude Include="Codes\Header\ResourceManager\Texture.h" />
+    <ClInclude Include="Codes\Header\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SDL3-3.4.8\VisualC\SDL\SDL.vcxproj" />
