@@ -57,22 +57,10 @@
     <ClCompile Include="addon\imgui-master\imgui.cpp">
       <Filter>external\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Component\BoxCollider.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Codes\Source\Component\CameraComponent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Codes\Source\Component\CharacterController.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Codes\Source\Component\MeshRenderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Source\Component\PhysicsSystem.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Codes\Source\Component\Rigidbody.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Source\Core\app.cpp">
@@ -133,6 +121,21 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Source\Component\transform.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Source\Component\BoxCollider.cpp">
+      <Filter>ソース ファイル\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Source\Component\CameraComponent.cpp">
+      <Filter>ソース ファイル\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Source\Component\CharacterController.cpp">
+      <Filter>ソース ファイル\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Source\Component\Rigidbody.cpp">
+      <Filter>ソース ファイル\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Source\Component\Component.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -264,6 +267,9 @@
   <ItemGroup>
     <None Include="SDL3-3.4.8\VisualC\SDL\SDL.vcxproj">
       <Filter>external</Filter>
+    </None>
+    <None Include="Codes\Source\ResourceManager\GameObject.inl">
+      <Filter>ソース ファイル</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

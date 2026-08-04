@@ -2,8 +2,10 @@
 
 #include <vector>
 
-#include "ResourceManager/GameObject.h"
 #include "Component/CameraComponent.h"
+#include "ResourceManager/GameObject.h"
+
+class GameObject;
 
 class Scene
 {

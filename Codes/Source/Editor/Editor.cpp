@@ -53,14 +53,16 @@ void Editor::DrawHierarchy(Scene* scene)
 
     ImGui::Begin("Hierarchy");
 
-    auto& objects = scene->GetObjects();
-
-    for (int i = 0; i < objects.size(); i++)
+    for (GameObject& obj : scene->GetObjects())
     {
-        if (ImGui::Selectable(objects[i].name.c_str(),
-            i == m_selectedObject))
+        bool selected =
+            (&obj == m_selectedObject);
+
+        if (ImGui::Selectable(
+            obj.name.c_str(),
+            selected))
         {
-            m_selectedObject = i;
+            m_selectedObject = &obj;
         }
     }
 
@@ -85,20 +87,22 @@ void Editor::DrawInspector(Scene* scene)
 
     auto& objects = scene->GetObjects();
 
-    if (m_selectedObject >= 0 &&
-        m_selectedObject < objects.size())
+    if (m_selectedObject == nullptr)
     {
-        GameObject& obj =
-            objects[m_selectedObject];
-
-        ImGui::Text("%s", obj.name.c_str());
-
-        DrawTransform(obj);
-        
-        DrawRigidbody(obj);
-
-        DrawBoxCollider(obj);
+        ImGui::Text("No Selection");
+        return;
     }
+
+    GameObject& obj =
+        *m_selectedObject;
+
+    ImGui::Text("%s", obj.name.c_str());
+
+    DrawTransform(obj);
+        
+    DrawRigidbody(obj);
+
+    DrawBoxCollider(obj);
 
     ImGui::End();
 }
@@ -174,4 +178,13 @@ void Editor::DrawBoxCollider(GameObject& obj)
             0.1f
         );
     }
+}
+void Editor::Select(GameObject* obj)
+{
+    m_selectedObject = obj;
+}
+
+GameObject* Editor::GetSelectedObject()
+{
+    return m_selectedObject;
 }

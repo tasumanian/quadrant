@@ -30,12 +30,6 @@ T* GameObject::GetComponent()
 
     return nullptr;
 }
-template<typename T>
-const std::vector<std::unique_ptr<Component>>&
-GameObject::GetComponents() const
-{
-    return m_components;
-}
 
 template<typename T>
 bool GameObject::HasComponent()

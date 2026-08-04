@@ -2,7 +2,7 @@
 #include "Core/Window.h"
 #include "Component/CameraComponent.h"
 #include <SDL3/SDL_mouse.h>
-
+#include "ResourceManager/GameObject.h"
 
 bool Renderer::Initialize(Window& window, Timer& timer , CameraSystem& cameraSystem)
 {

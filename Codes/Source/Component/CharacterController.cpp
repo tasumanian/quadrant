@@ -1,5 +1,6 @@
-#include "CharacterController.h"
-#include "StateInput.h"
+#include "Component/CharacterController.h"
+#include "ResourceManager/GameObject.h"
+#include "Core/StateInput.h"
 
 #include <SDL3/SDL.h>
 #include <glm/glm.hpp>

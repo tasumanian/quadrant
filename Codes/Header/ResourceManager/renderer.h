@@ -4,7 +4,6 @@
 #include "ResourceManager/Shader.h"
 #include "ResourceManager/Texture.h"
 #include "Core/Timer.h"
-#include "ResourceManager/GameObject.h"
 #include "Component/Components.h"
 #include "Core/StateInput.h"
 #include "ResourceManager/Scene.h"
