@@ -1,5 +1,4 @@
 #include "Component/Rigidbody.h"
-#include "Component/Rigidbody.h"
 
 Rigidbody::Rigidbody()
 {

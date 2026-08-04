@@ -1,4 +1,4 @@
-#include "CameraComponent.h"
-#include "GameObject.h"
-#include "Ray.h"
+#include "Component/CameraComponent.h"
+#include "ResourceManager/GameObject.h"
+#include "ResourceManager/Ray.h"
 

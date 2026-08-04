@@ -1,4 +1,4 @@
-#include "BoxCollider.h"
+#include "Component/BoxCollider.h"
 
 BoxCollider::BoxCollider()
 {

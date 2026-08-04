@@ -1,20 +1,24 @@
 #pragma once
 #include "Component/Components.h"
+#include "ResourceManager/GameObject.h"
 
-class GameObject;
 class Scene;
 class Window;
 
 class Editor
 {
+
 public:
 
+    void Select(GameObject* obj);
+
+    GameObject* GetSelectedObject();
     void Draw(Scene* scene);
     void Init(Window* window);
 
 private:
 
-    int m_selectedObject = -1;
+	GameObject* m_selectedObject = nullptr;
 
     void DrawHierarchy(Scene* scene);
     void DrawInspector(Scene* scene);

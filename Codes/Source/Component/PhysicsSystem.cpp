@@ -1,5 +1,6 @@
-#include "PhysicsSystem.h"
-#include "Ray.h"
+#include "ResourceManager/PhysicsSystem.h"
+#include "ResourceManager/Ray.h"
+#include "ResourceManager/GameObject.h"
 #include <iostream>
 void PhysicsSystem::Gravity(Scene* scene, float dt)
 {

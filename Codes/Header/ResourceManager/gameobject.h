@@ -17,9 +17,9 @@ public:
 	template<typename T>
 	T* GetComponent();
 
-	template<typename T>
 	const std::vector<std::unique_ptr<Component>>& GetComponents() const;
 
+	std::vector<std::unique_ptr<Component>>& GetComponents();
 	template<typename T>
 	bool HasComponent();
 

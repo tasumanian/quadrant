@@ -5,14 +5,8 @@ class Scene;
 class ComponentSystem
 {
 public:
+    
+    void Update(Scene&, float dt);
 
-    void Awake(Scene&);
-
-    void Start(Scene&);
-
-    void Update(Scene&, float);
-
-    void FixedUpdate(Scene&, float);
-
-    void LateUpdate(Scene&, float);
+    void LateUpdate(Scene&, float dt);
 };

@@ -160,6 +160,7 @@
     <ClCompile Include="Codes\Source\Component\BoxCollider.cpp" />
     <ClCompile Include="Codes\Source\Component\CameraComponent.cpp" />
     <ClCompile Include="Codes\Source\Component\CharacterController.cpp" />
+    <ClCompile Include="Codes\Source\Component\Component.cpp" />
     <ClCompile Include="Codes\Source\Component\MeshRenderer.cpp" />
     <ClCompile Include="Codes\Source\Component\PhysicsSystem.cpp" />
     <ClCompile Include="Codes\Source\Component\Rigidbody.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="Codes\Header\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Codes\Source\ResourceManager\GameObject.inl" />
     <None Include="SDL3-3.4.8\VisualC\SDL\SDL.vcxproj" />
   </ItemGroup>
   <ItemGroup>
