@@ -10,4 +10,9 @@ public:
 
 	glm::vec3 size;
 
+	const char* GetComponentName() const override
+	{
+		return "BoxCollider";
+	}
+
 };

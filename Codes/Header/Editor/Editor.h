@@ -1,6 +1,8 @@
 #pragma once
 #include "Component/Components.h"
 #include "ResourceManager/GameObject.h"
+#include "Editor/InspectorWindow.h"
+#include "Editor/HierarchyWindow.h"
 
 class Scene;
 class Window;
@@ -19,9 +21,9 @@ public:
 private:
 
 	GameObject* m_selectedObject = nullptr;
+	InspectorWindow m_inspectorWindow;
+	HierarchyWindow m_hierarchyWindow;
 
-    void DrawHierarchy(Scene* scene);
-    void DrawInspector(Scene* scene);
     void DrawTransform(GameObject& obj);
     void DrawRigidbody(GameObject& obj);
     void DrawCollider(GameObject& obj);

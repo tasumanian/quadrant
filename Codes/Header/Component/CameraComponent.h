@@ -31,4 +31,8 @@ public:
 		1,
 		1
 	};
+	const char* GetComponentName() const override
+	{
+		return "CameraComponent";
+	}
 };
