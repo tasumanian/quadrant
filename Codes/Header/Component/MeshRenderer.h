@@ -11,7 +11,10 @@ public:
 
     Material* material;
 
-
+    const char* GetComponentName() const override
+    {
+        return "MeshRenderer";
+    }
 
 	MeshRenderer();
 };

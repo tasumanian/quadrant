@@ -20,5 +20,10 @@ public:
 public:
     void AdaptGravity(float dt);
 
+    const char* GetComponentName() const override
+    {
+        return "Rigidbody";
+    }
+
     Rigidbody();
 };

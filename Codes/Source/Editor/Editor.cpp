@@ -15,6 +15,8 @@ void Editor::Init(Window* window)
     ImGui_ImplSDL3_InitForOpenGL(window->GetSDLWindow(), window->GetGlContext());
 
     ImGui_ImplOpenGL3_Init("#version 330");
+    m_hierarchyWindow.SetSelection(m_selectedObject);
+    m_inspectorWindow.SetSelection(m_selectedObject);
 }
 
 void Editor::Draw(Scene* scene)
@@ -24,9 +26,6 @@ void Editor::Draw(Scene* scene)
 
     ImGui::NewFrame();
 
-    DrawHierarchy(scene);
-    DrawInspector(scene);
-
     if (ImGui::BeginMainMenuBar())
     {
         ImGui::Text("Quadrant Engine");
@@ -34,154 +33,20 @@ void Editor::Draw(Scene* scene)
         ImGui::EndMainMenuBar();
     }
 
+    m_inspectorWindow.Draw(*scene);
+    m_hierarchyWindow.Draw(*scene);
+
     ImGui::Render();
 
     ImGui_ImplOpenGL3_RenderDrawData(
         ImGui::GetDrawData());
-}
-void Editor::DrawHierarchy(Scene* scene)
-{
-    ImGui::SetNextWindowPos(
-        ImVec2(0, 20),
-        ImGuiCond_Once
-    );
 
-    ImGui::SetNextWindowSize(
-        ImVec2(250, 500),
-        ImGuiCond_Once
-    );
-
-    ImGui::Begin("Hierarchy");
-
-    for (GameObject& obj : scene->GetObjects())
-    {
-        bool selected =
-            (&obj == m_selectedObject);
-
-        if (ImGui::Selectable(
-            obj.name.c_str(),
-            selected))
-        {
-            m_selectedObject = &obj;
-        }
-    }
-
-    ImGui::End();
-}
-void Editor::DrawInspector(Scene* scene)
-{
-    ImGuiIO& io = ImGui::GetIO();
-
-    ImGui::SetNextWindowPos(
-        ImVec2(io.DisplaySize.x - 300, 20),
-        ImGuiCond_Once
-    );
-
-    ImGui::SetNextWindowSize(
-        ImVec2(300, 500),
-        ImGuiCond_Once
-    );
-
-
-    ImGui::Begin("Inspector");
-
-    auto& objects = scene->GetObjects();
-
-    if (m_selectedObject == nullptr)
-    {
-        ImGui::Text("No Selection");
-        return;
-    }
-
-    GameObject& obj =
-        *m_selectedObject;
-
-    ImGui::Text("%s", obj.name.c_str());
-
-    DrawTransform(obj);
-        
-    DrawRigidbody(obj);
-
-    DrawBoxCollider(obj);
-
-    ImGui::End();
-}
-void Editor::DrawTransform(GameObject& obj)
-{
-    ImGui::Separator();
-
-    ImGui::Text("Transform");
-
-    ImGui::DragFloat3(
-        "Position",
-        &obj.transform.position.x,
-        0.1f
-    );
-
-    glm::vec3 euler =
-        glm::degrees(
-            glm::eulerAngles(
-                obj.transform.rotation
-            )
-        );
-
-    if (ImGui::DragFloat3(
-        "Rotation",
-        &euler.x,
-        1.0f
-    ))
-    {
-        obj.transform.rotation =
-            glm::quat(
-                glm::radians(euler)
-            );
-    }
-
-    ImGui::DragFloat3(
-        "Scale",
-        &obj.transform.scale.x,
-        0.1f
-    );
-}
-void Editor::DrawRigidbody(GameObject& obj)
-{
-    if (ImGui::CollapsingHeader("Rigidbody"))
-    {
-        ImGui::Checkbox(
-            "Use Gravity",
-            &obj.GetComponent<Rigidbody>()->useGravity
-        );
-
-        ImGui::DragFloat(
-            "Mass",
-            &obj.GetComponent<Rigidbody>()->mass,
-            0.1f,
-            0.1f,
-            100.0f
-        );
-
-        ImGui::Text(
-            "Velocity %.2f %.2f %.2f",
-            obj.GetComponent<Rigidbody>()->velocity.x,
-            obj.GetComponent<Rigidbody>()->velocity.y,
-            obj.GetComponent<Rigidbody>()->velocity.z
-        );
-    }
-}
-void Editor::DrawBoxCollider(GameObject& obj)
-{
-    if (ImGui::CollapsingHeader("Box Collider"))
-    {
-        ImGui::DragFloat3(
-            "Size",
-            &obj.GetComponent<BoxCollider>()->size.x,
-            0.1f
-        );
-    }
 }
 void Editor::Select(GameObject* obj)
 {
     m_selectedObject = obj;
+    m_hierarchyWindow.SetSelection(obj);
+    m_inspectorWindow.SetSelection(obj);
 }
 
 GameObject* Editor::GetSelectedObject()
