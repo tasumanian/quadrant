@@ -1,20 +1,13 @@
 #pragma once
 
-#include "EditorWindow.h"
+#include "Editor/EditorWindow.h"
 
+class Editor;
 class HierarchyWindow :
     public EditorWindow
 {
 public:
 
-    void Draw(Scene& scene) override;
+    void Draw(Scene& scene,Editor& editor) override;
 
-	void SetSelection(GameObject* obj)
-	{
-		m_selection = obj;
-	}
-
-private:
-
-    GameObject* m_selection = nullptr;
 };

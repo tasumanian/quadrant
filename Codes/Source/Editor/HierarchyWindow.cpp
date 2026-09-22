@@ -1,8 +1,9 @@
 #include "Editor/HierarchyWindow.h"
 #include "Component/Components.h"
 #include "ResourceManager/GameObject.h"
+#include "Editor/Editor.h"
 
-void HierarchyWindow::Draw(Scene& scene)
+void HierarchyWindow::Draw(Scene& scene, Editor& editor)
 {
     ImGui::SetNextWindowPos(
         ImVec2(0, 20),
@@ -16,16 +17,16 @@ void HierarchyWindow::Draw(Scene& scene)
 
     ImGui::Begin("Hierarchy");
 
-    for (GameObject& obj : scene.GetObjects())
+    for (auto& obj : scene.GetObjects())
     {
         bool selected =
-            (&obj == m_selection);
+            (&obj == editor.GetSelectedObject());
 
         if (ImGui::Selectable(
-            obj.name.c_str(),
+            obj->name.c_str(),
             selected))
         {
-            m_selection = &obj;
+            editor.Select(&obj);
         }
     }
     ImGui::End();

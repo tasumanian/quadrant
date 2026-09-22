@@ -10,6 +10,7 @@ enum class PropertyType
     Vec2,
     Vec3,
     Vec4,
+    quat,
     String,
     Enum,
     Asset,

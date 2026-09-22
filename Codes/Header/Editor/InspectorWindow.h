@@ -1,23 +1,15 @@
 #pragma once
-#include "EditorWindow.h"
+#include "Editor/EditorWindow.h"
 
+class Editor;
 class InspectorWindow :
     public EditorWindow
 {
-private:
-
-    GameObject* m_selection;
-
 public:
 
-    void Draw(Scene& scene) override;
+    void Draw(Scene& scene,Editor& editor) override;
 
     void DrawComponent(Component* component);
 
     void DrawProperty(PropertyBase* property);
-
-	void SetSelection(GameObject* obj)
-	{
-		m_selection = obj;
-	}
 };

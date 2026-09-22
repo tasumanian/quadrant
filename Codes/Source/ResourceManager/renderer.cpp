@@ -43,27 +43,26 @@ void Renderer::Draw(Scene& scene)
             camera,
             aspect);
 
-    // 奥（青）
-	for (GameObject& obj : scene.GetObjects()) //オブジェクトの描写
+    // オブジェクトの描写
+    for (auto& objPtr : scene.GetObjects())
     {
-        auto* renderer =
-            obj.GetComponent<MeshRenderer>();
-
-        if (!renderer)
+        if(!objPtr->HasComponent<MeshRenderer>())
             continue;
 
-        renderer->material->GetShader()->SetMat4("uView", view); //シェーダにカメラ軸行列を渡す
-        renderer->material->GetShader()->SetMat4("uProj", proj); //シェーダに投影行列を渡す
+        auto& renderer = *objPtr->GetComponent<MeshRenderer>();
 
-        glm::mat4 model = obj.transform.GetWorldMatrix(); //ワールド行列の取得
+        renderer.material->GetShader()->SetMat4("uView", view); //シェーダにカメラ軸行列を渡す
+        renderer.material->GetShader()->SetMat4("uProj", proj); //シェーダに投影行列を渡す
 
-        renderer->material->GetShader()->SetMat4("uModel",model); //シェーダにワールド行列を渡す
+        glm::mat4 model = objPtr->GetComponent<Transform>()->GetWorldMatrix(); //ワールド行列の取得
+
+        renderer.material->GetShader()->SetMat4("uModel",model); //シェーダにワールド行列を渡す
 
 
-        renderer->material->GetShader()->Use(); //シェーダの使用
-        renderer->material->GetTexture()->Bind(); //テクスチャのバインド
+        renderer.material->GetShader()->Use(); //シェーダの使用
+        renderer.material->GetTexture()->Bind(); //テクスチャのバインド
 
-		renderer->mesh->Draw(); //メッシュの描写
+		renderer.mesh->Draw(); //メッシュの描写
     }
 }
 

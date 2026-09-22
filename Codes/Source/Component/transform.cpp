@@ -6,6 +6,21 @@ Transform::Transform()
     rotation = glm::identity<glm::quat>();
     scale = glm::vec3(1.0f);
     parent = nullptr;
+
+    RegisterProperty(
+        "Position",
+        &position
+    );
+
+    RegisterProperty(
+        "Rotation",
+        &rotation
+    );
+
+    RegisterProperty(
+        "Scale",
+        &scale
+    );
 }
 glm::vec3 Transform::Forward() const
 {
@@ -86,4 +101,5 @@ void Transform::SetParent(Transform* newParent)
     {
         parent->children.push_back(this);
     }
+
 }

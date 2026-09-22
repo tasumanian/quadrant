@@ -3,8 +3,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include "Component/Component.h"
 
-struct Transform
+class Transform : public Component
 {
 	public:
 
@@ -15,6 +16,11 @@ struct Transform
 		std::vector<Transform*> children;
 
 		Transform();
+
+		const char* GetComponentName() const override
+		{
+			return "Transform";
+		}
 
 		glm::vec3 Forward() const ;
 		glm::vec3 Back() const;

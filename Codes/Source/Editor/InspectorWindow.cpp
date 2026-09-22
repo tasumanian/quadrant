@@ -1,7 +1,10 @@
 #include "Editor/InspectorWindow.h"
+#include "Editor/Editor.h"
 
-void InspectorWindow::Draw(Scene& scene)
+void InspectorWindow::Draw(Scene& scene, Editor& editor)
 {
+    std::unique_ptr<GameObject>* selectobj = editor.GetSelectedObject();
+
         ImGuiIO& io = ImGui::GetIO();
 
         ImGui::SetNextWindowPos(
@@ -17,21 +20,19 @@ void InspectorWindow::Draw(Scene& scene)
 
         ImGui::Begin("Inspector");
 
-        auto& objects = scene.GetObjects();
-
-        if (m_selection == nullptr)
+        if (selectobj == nullptr)
         {
             ImGui::Text("No Selection");
             ImGui::End();
             return;
         }
 
-        GameObject& obj =
-            *m_selection;
+        std::unique_ptr<GameObject>& obj =
+            *selectobj;
 
-        ImGui::Text("%s", obj.name.c_str());
+        ImGui::Text("%s", obj->name.c_str());
 
-        for (auto& component : obj.GetComponents())
+        for (auto& component : obj->GetComponents())
         {
             DrawComponent(component.get());
         }
@@ -45,7 +46,7 @@ void InspectorWindow::DrawComponent(Component* component)
         for (auto& property :
             component->GetProperties())
         {
-          //  DrawProperty(property.get());
+            DrawProperty(property.get());
         }
     }
 }

@@ -10,6 +10,26 @@ Rigidbody::Rigidbody()
     useGravity = true;
 
 	isGrounded = false;
+
+    RegisterProperty(
+        "Enable",
+        &enabled
+    );
+
+    RegisterProperty(
+        "Use Gravity",
+        &useGravity
+    );
+
+    RegisterProperty(
+        "Mass",
+        &mass
+    );
+
+    RegisterProperty(
+        "Velocity",
+        &velocity
+    );
 }
 void Rigidbody::AdaptGravity(float dt)
 {

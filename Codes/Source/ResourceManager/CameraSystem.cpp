@@ -7,13 +7,16 @@ glm::mat4 CameraSystem::GetViewMatrix(
     const CameraComponent* camera
 ) const
 {
-    const Transform& tr =
-        camera->gameObject->transform;
+    GameObject& obj =
+        *camera->gameObject;
+
+    const Transform* tr =
+        obj.GetComponent<Transform>();
 
     return glm::lookAt(
-        tr.position,
-        tr.position + tr.Forward(),
-        tr.Up()
+        tr->position,
+        tr->position + tr->Forward(),
+        tr->Up()
     );
 }
 glm::mat4 CameraSystem::GetProjectionMatrix(
@@ -88,8 +91,11 @@ Ray CameraSystem::ScreenPointToRay(
     glm::vec3 direction =
         glm::normalize(glm::vec3(rayWorld));
 
+    GameObject& obj =
+        *camera->gameObject;
+
     return Ray(
-        camera->gameObject->transform.position,
+        obj.GetComponent<Transform>()->position,
         direction
     );
 }

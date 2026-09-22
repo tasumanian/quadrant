@@ -7,9 +7,9 @@ void ComponentSystem::Update(
     Scene& scene,
     float dt)
 {
-    for (GameObject& obj : scene.GetObjects())
+    for (auto& obj : scene.GetObjects())
     {
-        for (auto& component : obj.GetComponents())
+        for (auto& component : obj->GetComponents())
         {
             if (!component->enabled)
                 continue;
@@ -34,9 +34,9 @@ void ComponentSystem::LateUpdate(
     Scene& scene,
     float dt)
 {
-    for (GameObject& obj : scene.GetObjects())
+    for (std::unique_ptr<GameObject>& obj : scene.GetObjects())
     {
-        for (auto& component : obj.GetComponents())
+        for (auto& component : obj->GetComponents())
         {
             if (!component->enabled)
                 continue;

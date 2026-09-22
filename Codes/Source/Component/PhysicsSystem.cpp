@@ -2,25 +2,27 @@
 #include "ResourceManager/Ray.h"
 #include "ResourceManager/GameObject.h"
 #include <iostream>
+
 void PhysicsSystem::Gravity(Scene* scene, float dt)
 {
     auto& objects =
-		scene->GetObjects();
+        scene->GetObjects();
 
-    for (GameObject& obj:objects)
+    for (auto& obj : objects)
     {
-        if(!obj.HasComponent<Rigidbody>())
+
+        if(!obj->HasComponent<Rigidbody>())
             continue;
 
-        Rigidbody& rb = *obj.GetComponent<Rigidbody>();
-		
-		rb.isGrounded = false;
+        Rigidbody& rb = *obj->GetComponent<Rigidbody>();
 
+        rb.isGrounded = false;
 
+        Transform& tr = *obj->GetComponent<Transform>();
         //テスト用
-        obj.transform.rotation = 
+        tr.rotation =
             glm::normalize(glm::angleAxis(glm::radians(90.0f * dt), glm::vec3(0, 1, 0))
-            * obj.transform.rotation);
+            * tr.rotation);
 
 
         // 重力
@@ -28,20 +30,20 @@ void PhysicsSystem::Gravity(Scene* scene, float dt)
         {
             rb.AdaptGravity(dt);
         }
-        obj.transform.position += rb.velocity * dt;
+        tr.position += rb.velocity * dt;
 
         // 衝突判定
-        for ( GameObject& other : objects)
+        for (auto& other : objects)
         {
 
             // 自分自身除外
-            if (&obj == &other)
+            if (obj == other)
             {
                 continue;
             }
 
-            if(!other.HasComponent<BoxCollider>() || !obj.HasComponent<BoxCollider>())
-				continue;
+            if(!other->HasComponent<BoxCollider>() || !obj->HasComponent<BoxCollider>())
+                continue;
 
             // 衝突
             if (!CheckAABB(obj, other))
@@ -51,19 +53,21 @@ void PhysicsSystem::Gravity(Scene* scene, float dt)
          }   
     }
 }
-bool PhysicsSystem::CheckAABB(GameObject& obj1, GameObject& obj2)
+bool PhysicsSystem::CheckAABB(std::unique_ptr<GameObject>& obj1, std::unique_ptr<GameObject>& obj2)
 {
-    if (!obj1.HasComponent<BoxCollider>() || !obj2.HasComponent<BoxCollider>())
+    if (!obj1->HasComponent<BoxCollider>() || !obj2->HasComponent<BoxCollider>())
         return false;
 
+    Transform& tr1 = *obj1->GetComponent<Transform>();
+    Transform& tr2 = *obj2->GetComponent<Transform>();
 
-    glm::vec3 aMin = obj1.transform.position - obj1.GetComponent<BoxCollider>()->size * 0.5f;
+    glm::vec3 aMin = tr1.position - obj1->GetComponent<BoxCollider>()->size * 0.5f;
 
-    glm::vec3 aMax = obj1.transform.position + obj1.GetComponent<BoxCollider>()->size * 0.5f;
+    glm::vec3 aMax = tr1.position + obj1->GetComponent<BoxCollider>()->size * 0.5f;
 
-    glm::vec3 bMin = obj2.transform.position - obj2.GetComponent<BoxCollider>()->size * 0.5f;
+    glm::vec3 bMin = tr2.position - obj2->GetComponent<BoxCollider>()->size * 0.5f;
 
-    glm::vec3 bMax = obj2.transform.position + obj2.GetComponent<BoxCollider>()->size * 0.5f;
+    glm::vec3 bMax = tr2.position + obj2->GetComponent<BoxCollider>()->size * 0.5f;
 
     return //衝突確認
     (//AとBの座標の最大点と最小点を比較して、重なっているかどうかを確認
@@ -74,13 +78,16 @@ bool PhysicsSystem::CheckAABB(GameObject& obj1, GameObject& obj2)
     aMin.z <= bMax.z && aMax.z >= bMin.z
     );
 }
-void PhysicsSystem::ResolveAABB(GameObject& obj1, GameObject& obj2 , Rigidbody& rb)
+void PhysicsSystem::ResolveAABB(std::unique_ptr<GameObject>& obj1, std::unique_ptr<GameObject>& obj2 , Rigidbody& rb)
 {
-    glm::vec3 aMin = obj1.transform.position - obj1.GetComponent<BoxCollider>()->size * 0.5f;
-    glm::vec3 aMax = obj1.transform.position + obj1.GetComponent<BoxCollider>()->size * 0.5f;
+    Transform& tr1 = *obj1->GetComponent<Transform>();
+    Transform& tr2 = *obj2->GetComponent<Transform>();
 
-    glm::vec3 bMin = obj2.transform.position - obj2.GetComponent<BoxCollider>()->size * 0.5f;
-    glm::vec3 bMax = obj2.transform.position + obj2.GetComponent<BoxCollider>()->size * 0.5f;
+    glm::vec3 aMin = tr1.position - obj1->GetComponent<BoxCollider>()->size * 0.5f;
+    glm::vec3 aMax = tr1.position + obj1->GetComponent<BoxCollider>()->size * 0.5f;
+
+    glm::vec3 bMin = tr2.position - obj2->GetComponent<BoxCollider>()->size * 0.5f;
+    glm::vec3 bMax = tr2.position + obj2->GetComponent<BoxCollider>()->size * 0.5f;
 
     float overlapY = std::min(aMax.y, bMax.y) - std::max(aMin.y, bMin.y);
     float overlapX = std::min(aMax.x, bMax.x) - std::max(aMin.x, bMin.x);
@@ -92,13 +99,13 @@ void PhysicsSystem::ResolveAABB(GameObject& obj1, GameObject& obj2 , Rigidbody& 
     // obj が上にいる時だけ
     if (minOverlap == overlapY)
     {
-        if (obj1.transform.position.y < obj2.transform.position.y)
+        if (tr1.position.y < tr2.position.y)
         {
-            obj1.transform.position.y -= overlapY;
+            tr1.position.y -= overlapY;
         }
         else
         {
-            obj1.transform.position.y += overlapY;
+            tr1.position.y += overlapY;
 
             rb.isGrounded = true;
         }
@@ -107,26 +114,26 @@ void PhysicsSystem::ResolveAABB(GameObject& obj1, GameObject& obj2 , Rigidbody& 
     }
     else if (minOverlap == overlapX)
     {
-        if (obj1.transform.position.x < obj2.transform.position.x)
+        if (tr1.position.x < tr2.position.x)
         {
-            obj1.transform.position.x -= overlapX;
+            tr1.position.x -= overlapX;
         }
         else
         {
-            obj1.transform.position.x += overlapX;
+            tr1.position.x += overlapX;
         }
 
         rb.velocity.x = 0.0f;
     }
     else
     {
-        if (obj1.transform.position.z < obj2.transform.position.z)
+        if (tr1.position.z < tr2.position.z)
         {
-            obj1.transform.position.z -= overlapZ;
+            tr1.position.z -= overlapZ;
         }
         else
         {
-            obj1.transform.position.z += overlapZ;
+            tr1.position.z += overlapZ;
         }
 
         rb.velocity.z = 0.0f;
@@ -134,21 +141,21 @@ void PhysicsSystem::ResolveAABB(GameObject& obj1, GameObject& obj2 , Rigidbody& 
 }
 bool PhysicsSystem::CheckRayAABB(
     const Ray& ray,
-    GameObject& obj,
+    std::unique_ptr<GameObject>& obj,
     float& distance
 )
 {
-    if (!obj.HasComponent<BoxCollider>())
+    if (!obj->HasComponent<BoxCollider>())
         return false;
 
 
     glm::vec3 min =
-        obj.transform.position
-        - obj.GetComponent<BoxCollider>()->size * 0.5f;
+        obj->GetComponent<Transform>()->position
+        - obj->GetComponent<BoxCollider>()->size * 0.5f;
 
     glm::vec3 max =
-        obj.transform.position
-        + obj.GetComponent<BoxCollider>()->size * 0.5f;
+        obj->GetComponent<Transform>()->position
+        + obj->GetComponent<BoxCollider>()->size * 0.5f;
 
     float tMin = 0.0f;
     float tMax = FLT_MAX;
@@ -201,15 +208,15 @@ bool PhysicsSystem::CheckRayAABB(
 
     return true;
 }
-GameObject* PhysicsSystem::Raycast(
+std::unique_ptr<GameObject>* PhysicsSystem::Raycast(
     Scene* scene,
     const Ray& ray)
 {
-    GameObject* result = nullptr;
+    std::unique_ptr<GameObject>* result = nullptr;
 
     float nearest = FLT_MAX;
 
-    for (GameObject& obj : scene->GetObjects())
+    for (auto& obj : scene->GetObjects())
     {
         float distance;
 

@@ -2,6 +2,7 @@
 
 #include "Component/Transform.h"
 #include "Component/Component.h"
+#include <glm/glm.hpp>
 #include <string>
 #include <vector>
 #include <memory>
@@ -10,6 +11,14 @@ class GameObject
 {
 public:
 	GameObject();
+
+	GameObject(glm::vec3 pos);
+
+	GameObject(glm::vec3 pos, glm::quat lotate);
+
+	GameObject(glm::vec3 pos, glm::vec3 scale);
+
+	GameObject(glm::vec3 pos, glm::quat lotate, glm::vec3 scale);
 
 	template<typename T, typename... Args>
 	T* AddComponent(Args&&... args);
@@ -23,9 +32,7 @@ public:
 	template<typename T>
 	bool HasComponent();
 
-	void SetParent(GameObject* parent);
-
-    Transform transform;
+	void SetParent(std::unique_ptr<GameObject>& parent);
 
     std::string name;
 

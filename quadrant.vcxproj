@@ -238,6 +238,7 @@
     <ClInclude Include="Codes\Header\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Codes\Source\Component\Component.inl" />
     <None Include="Codes\Source\ResourceManager\GameObject.inl" />
     <None Include="SDL3-3.4.8\VisualC\SDL\SDL.vcxproj" />
   </ItemGroup>
