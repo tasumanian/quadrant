@@ -15,7 +15,7 @@ void CharacterController::Update(CameraComponent* camera,float deltaTime)
 
     float rotationSpeed = 1.0f;
     float mouseSensitivity = 0.05f;
-	Transform& cameraTr = camera->gameObject->transform;
+	Transform* cameraTr = camera->gameObject->GetComponent<Transform>();
     //マウスの移動量を取得s
 	glm::vec2 mouseDelta =
 		StateInput::GetMouseDelta();
@@ -26,7 +26,7 @@ void CharacterController::Update(CameraComponent* camera,float deltaTime)
 
     m_pitch = std::clamp(m_pitch, -89.0f, 89.0f);
 
-    cameraTr.rotation =
+    cameraTr->rotation =
         glm::quat(glm::vec3(
             glm::radians(m_pitch),
             glm::radians(m_yaw),
@@ -36,25 +36,25 @@ void CharacterController::Update(CameraComponent* camera,float deltaTime)
 
     if (StateInput::GetKey(SDL_SCANCODE_W))
     {
-        cameraTr.position +=
-            cameraTr.Forward() * moveSpeed * deltaTime; //デルタタイムを使った時間計算
+        cameraTr->position +=
+            cameraTr->Forward() * moveSpeed * deltaTime; //デルタタイムを使った時間計算
     }
 
     if (StateInput::GetKey(SDL_SCANCODE_S))
     {
-        cameraTr.position +=
-            cameraTr.Back() * moveSpeed * deltaTime;
+        cameraTr->position +=
+            cameraTr->Back() * moveSpeed * deltaTime;
     }
 
     if (StateInput::GetKey(SDL_SCANCODE_A))
     {
-        cameraTr.position +=
-            cameraTr.Left() * moveSpeed * deltaTime;
+        cameraTr->position +=
+            cameraTr->Left() * moveSpeed * deltaTime;
     }
 
     if (StateInput::GetKey(SDL_SCANCODE_D))
     {
-        cameraTr.position +=
-            cameraTr.Right() * moveSpeed * deltaTime;
+        cameraTr->position +=
+            cameraTr->Right() * moveSpeed * deltaTime;
     }
 }

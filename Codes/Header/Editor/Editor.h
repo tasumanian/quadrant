@@ -12,21 +12,21 @@ class Editor
 
 public:
 
-    void Select(GameObject* obj);
+    void Select(std::unique_ptr<GameObject>* obj);
 
-    GameObject* GetSelectedObject();
+    std::unique_ptr<GameObject>* GetSelectedObject();
     void Draw(Scene* scene);
     void Init(Window* window);
 
 private:
 
-	GameObject* m_selectedObject = nullptr;
+    std::unique_ptr<GameObject>* m_selectedObject = nullptr;
 	InspectorWindow m_inspectorWindow;
 	HierarchyWindow m_hierarchyWindow;
 
-    void DrawTransform(GameObject& obj);
-    void DrawRigidbody(GameObject& obj);
-    void DrawCollider(GameObject& obj);
-    void DrawMaterial(GameObject& obj);
-    void DrawBoxCollider(GameObject& obj);
+    //void DrawTransform(GameObject& obj);
+    //void DrawRigidbody(GameObject& obj);
+    //void DrawCollider(GameObject& obj);
+    //void DrawMaterial(GameObject& obj);
+    //void DrawBoxCollider(GameObject& obj);
 };

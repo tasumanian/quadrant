@@ -15,8 +15,6 @@ void Editor::Init(Window* window)
     ImGui_ImplSDL3_InitForOpenGL(window->GetSDLWindow(), window->GetGlContext());
 
     ImGui_ImplOpenGL3_Init("#version 330");
-    m_hierarchyWindow.SetSelection(m_selectedObject);
-    m_inspectorWindow.SetSelection(m_selectedObject);
 }
 
 void Editor::Draw(Scene* scene)
@@ -33,8 +31,8 @@ void Editor::Draw(Scene* scene)
         ImGui::EndMainMenuBar();
     }
 
-    m_inspectorWindow.Draw(*scene);
-    m_hierarchyWindow.Draw(*scene);
+    m_inspectorWindow.Draw(*scene, *this);
+    m_hierarchyWindow.Draw(*scene, *this);
 
     ImGui::Render();
 
@@ -42,14 +40,12 @@ void Editor::Draw(Scene* scene)
         ImGui::GetDrawData());
 
 }
-void Editor::Select(GameObject* obj)
+void Editor::Select(std::unique_ptr<GameObject>* obj)
 {
     m_selectedObject = obj;
-    m_hierarchyWindow.SetSelection(obj);
-    m_inspectorWindow.SetSelection(obj);
 }
 
-GameObject* Editor::GetSelectedObject()
+std::unique_ptr<GameObject>* Editor::GetSelectedObject()
 {
     return m_selectedObject;
 }

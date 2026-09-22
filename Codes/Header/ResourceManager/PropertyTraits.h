@@ -21,3 +21,8 @@ struct PropertyTraits<glm::vec3>
 {
     static constexpr PropertyType Type = PropertyType::Vec3;
 };
+template<>
+struct PropertyTraits<glm::quat>
+{
+    static constexpr PropertyType Type = PropertyType::quat;
+};

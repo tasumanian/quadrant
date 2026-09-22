@@ -54,3 +54,5 @@ public:
     }
 
 };
+
+#include "Component/Component.inl"
