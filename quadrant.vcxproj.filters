@@ -31,6 +31,12 @@
     <Filter Include="ソース ファイル\Components">
       <UniqueIdentifier>{2607ab21-c378-4d6c-9b47-370922fbe852}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Editor">
+      <UniqueIdentifier>{d9f67217-bfbf-46b9-9345-da98c56ac41d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Editor">
+      <UniqueIdentifier>{282d732a-4192-49fe-8b8b-4cd5dec0bc86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="addon\glad\src\glad.c">
@@ -57,92 +63,92 @@
     <ClCompile Include="addon\imgui-master\imgui.cpp">
       <Filter>external\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Component\MeshRenderer.cpp">
+    <ClCompile Include="Codes\Source\shader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Component\PhysicsSystem.cpp">
+    <ClCompile Include="Codes\Source\stateinput.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Core\app.cpp">
+    <ClCompile Include="Codes\Source\Texture.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Core\EventInput.cpp">
+    <ClCompile Include="Codes\Source\timer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Core\main.cpp">
+    <ClCompile Include="Codes\Source\window.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Core\mat4.cpp">
+    <ClCompile Include="Codes\Source\app.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Core\stateinput.cpp">
+    <ClCompile Include="Codes\Source\CameraComponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Core\timer.cpp">
+    <ClCompile Include="Codes\Source\CameraSystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Core\window.cpp">
+    <ClCompile Include="Codes\Source\CharacterController.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Editor\Editor.cpp">
+    <ClCompile Include="Codes\Source\Component.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\ResourceManager\CameraSystem.cpp">
+    <ClCompile Include="Codes\Source\ComponentSystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\ResourceManager\ComponentSystem.cpp">
+    <ClCompile Include="Codes\Source\EventInput.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\ResourceManager\gameobject.cpp">
+    <ClCompile Include="Codes\Source\gameobject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\ResourceManager\Material.cpp">
+    <ClCompile Include="Codes\Source\main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\ResourceManager\mesh.cpp">
+    <ClCompile Include="Codes\Source\mat4.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\ResourceManager\Ray.cpp">
+    <ClCompile Include="Codes\Source\Material.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\ResourceManager\renderer.cpp">
+    <ClCompile Include="Codes\Source\mesh.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\ResourceManager\ResourceManager.cpp">
+    <ClCompile Include="Codes\Source\PhysicsSystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\ResourceManager\Scene.cpp">
+    <ClCompile Include="Codes\Source\Ray.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\ResourceManager\shader.cpp">
+    <ClCompile Include="Codes\Source\renderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\ResourceManager\Texture.cpp">
+    <ClCompile Include="Codes\Source\ResourceManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Component\transform.cpp">
+    <ClCompile Include="Codes\Source\Scene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Component\BoxCollider.cpp">
+    <ClCompile Include="Codes\Source\transform.cpp">
       <Filter>ソース ファイル\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Component\CameraComponent.cpp">
+    <ClCompile Include="Codes\Source\Rigidbody.cpp">
       <Filter>ソース ファイル\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Component\CharacterController.cpp">
+    <ClCompile Include="Codes\Source\MeshRenderer.cpp">
       <Filter>ソース ファイル\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Component\Rigidbody.cpp">
+    <ClCompile Include="Codes\Source\BoxCollider.cpp">
       <Filter>ソース ファイル\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Component\Component.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Codes\Source\Editor.cpp">
+      <Filter>ソース ファイル\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Editor\HierarchyWindow.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Codes\Source\HierarchyWindow.cpp">
+      <Filter>ソース ファイル\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\Editor\InspectorWindow.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Codes\Source\InspectorWindow.cpp">
+      <Filter>ソース ファイル\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -176,118 +182,118 @@
     <ClInclude Include="addon\glm-master\glm\glm.hpp">
       <Filter>external</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Component\BoxCollider.h">
+    <ClInclude Include="Codes\Header\shader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Component\CameraComponent.h">
+    <ClInclude Include="Codes\Header\stateinput.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Component\CharacterController.h">
+    <ClInclude Include="Codes\Header\Texture.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Component\Component.h">
+    <ClInclude Include="Codes\Header\timer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Component\ComponentRegistry.h">
+    <ClInclude Include="Codes\Header\window.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Component\Components.h">
+    <ClInclude Include="Codes\Header\app.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Component\MeshRenderer.h">
+    <ClInclude Include="Codes\Header\CameraSystem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Component\Rigidbody.h">
+    <ClInclude Include="Codes\Header\CharacterController.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Core\app.h">
+    <ClInclude Include="Codes\Header\Component.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Core\EventInput.h">
+    <ClInclude Include="Codes\Header\ComponentRegistry.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Core\mat4.h">
+    <ClInclude Include="Codes\Header\EventInput.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Core\stateinput.h">
+    <ClInclude Include="Codes\Header\gameobject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Core\timer.h">
+    <ClInclude Include="Codes\Header\mat4.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Core\window.h">
+    <ClInclude Include="Codes\Header\Material.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Editor\Editor.h">
+    <ClInclude Include="Codes\Header\mesh.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\Editor\EditorCameraController.h">
+    <ClInclude Include="Codes\Header\PhysicsSystem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\CameraSystem.h">
+    <ClInclude Include="Codes\Header\Property.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\ComponentSystem.h">
+    <ClInclude Include="Codes\Header\PropertyBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\gameobject.h">
+    <ClInclude Include="Codes\Header\PropertyTraits.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\Material.h">
+    <ClInclude Include="Codes\Header\Ray.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\mesh.h">
+    <ClInclude Include="Codes\Header\renderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\PhysicsSystem.h">
+    <ClInclude Include="Codes\Header\resource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\Ray.h">
+    <ClInclude Include="Codes\Header\ResourceManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\renderer.h">
+    <ClInclude Include="Codes\Header\Scene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\resource.h">
+    <ClInclude Include="Codes\Header\SelectionContext.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\ResourceManager.h">
+    <ClInclude Include="Codes\Header\BoxCollider.h">
+      <Filter>ヘッダー ファイル\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Header\CameraComponent.h">
+      <Filter>ヘッダー ファイル\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Header\EditorWindow.h">
+      <Filter>ヘッダー ファイル\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Header\EditorCameraController.h">
+      <Filter>ヘッダー ファイル\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Header\Editor.h">
+      <Filter>ヘッダー ファイル\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Header\Components.h">
+      <Filter>ヘッダー ファイル\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Header\MeshRenderer.h">
+      <Filter>ヘッダー ファイル\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Header\Rigidbody.h">
+      <Filter>ヘッダー ファイル\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Header\transform.h">
+      <Filter>ヘッダー ファイル\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Header\ComponentSystem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\Scene.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Codes\Header\HierarchyWindow.h">
+      <Filter>ヘッダー ファイル\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\shader.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Codes\Header\InspectorWindow.h">
+      <Filter>ヘッダー ファイル\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\Texture.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\Header\stb_image.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\Header\Component\transform.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\Header\Editor\SelectionContext.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\Header\Editor\EditorWindow.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\Header\Editor\HierarchyWindow.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\Header\Editor\InspectorWindow.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\Property.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\PropertyBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\Header\ResourceManager\PropertyTraits.h">
+    <ClInclude Include="CollisionInfo.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -295,10 +301,10 @@
     <None Include="SDL3-3.4.8\VisualC\SDL\SDL.vcxproj">
       <Filter>external</Filter>
     </None>
-    <None Include="Codes\Source\ResourceManager\GameObject.inl">
+    <None Include="Codes\Source\Component.inl">
       <Filter>ソース ファイル</Filter>
     </None>
-    <None Include="Codes\Source\Component\Component.inl">
+    <None Include="Codes\Source\GameObject.inl">
       <Filter>ソース ファイル</Filter>
     </None>
   </ItemGroup>
