@@ -1,141 +1,164 @@
 #include "Mesh.h"
 
 #include <glad/glad.h>
+#include "MemoryTracker.h"
+#include <cstddef>
+#include <utility>
 
-bool Mesh::CreateObject()
+Mesh::~Mesh()
 {
-    //次のs消すとエラー
-    //座標を設定s 
-    Vertex vertices[] =
+    Destroy();
+}
+
+Mesh::Mesh(Mesh&& other) noexcept
+{
+    *this = std::move(other);
+}
+
+Mesh& Mesh::operator=(Mesh&& other) noexcept
+{
+    if (this != &other)
     {
-        // Front
-        {-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0,0,1},
-        { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0,0,1},
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0,0,1},
-        {-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0,0,1},
+        Destroy();
+        name = std::move(other.name);
+        m_vao = other.m_vao;
+        m_vbo = other.m_vbo;
+        m_ebo = other.m_ebo;
+        m_indexCount = other.m_indexCount;
+        m_gpuBytes = other.m_gpuBytes;
 
-        // Back
-        { 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, 0,0,-1},
-        {-0.5f, -0.5f, -0.5f,  1.0f,  0.0f, 0,0,-1},
-        {-0.5f,  0.5f, -0.5f,  1.0f,  1.0f, 0,0,-1},
-        { 0.5f,  0.5f, -0.5f,  0.0f,  1.0f, 0,0,-1},
+        other.m_vao = 0;
+        other.m_vbo = 0;
+        other.m_ebo = 0;
+        other.m_indexCount = 0;
+        other.m_gpuBytes = 0;
+    }
+    return *this;
+}
 
-        // Right
-        { 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1,0,0},
-        { 0.5f, -0.5f, -0.5f,  1.0f,  0.0f, 1,0,0},
-        { 0.5f,  0.5f, -0.5f,  1.0f,  1.0f, 1,0,0},
-        { 0.5f,  0.5f,  0.5f,  0.0f,  1.0f, 1,0,0},
+void Mesh::Destroy()
+{
+    if (m_ebo) glDeleteBuffers(1, &m_ebo);
+    if (m_vbo) glDeleteBuffers(1, &m_vbo);
+    if (m_vao) glDeleteVertexArrays(1, &m_vao);
+    m_vao = m_vbo = m_ebo = 0;
+    m_indexCount = 0;
 
-        // Left
-        {-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,-1,0,0},
-        {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f,-1,0,0},
-        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f,-1,0,0},
-        {-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,-1,0,0},
-
-        // Top
-        {-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,0,1,0},
-        { 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,0,1,0},
-        { 0.5f,  0.5f, -0.5f,  1.0f,  1.0f,0,1,0},
-        {-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,0,1,0},
-
-        // Bottom
-        {-0.5f, -0.5f, -0.5f,  0.0f,  0.0f,0,-1,0},
-        { 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,0,-1,0},
-        { 0.5f, -0.5f,  0.5f,  1.0f,  1.0f,0,-1,0},
-        {-0.5f, -0.5f,  0.5f,  0.0f,  1.0f,0,-1,0},
-    };
-    unsigned int indices[] = //各頂点の順番
+    if (m_gpuBytes)
     {
-		//各面2つの三角形で構成されるため、6つの頂点が必要.
-        // Front
-       0, 1, 2,
-       2, 3, 0,
+        MemTrack::Sub(MemTrack::Category::MeshGpu, m_gpuBytes);
+        m_gpuBytes = 0;
+    }
+}
 
-       // Back
-       4, 5, 6,
-       6, 7, 4,
+bool Mesh::Create(const Vertex* vertices, unsigned int vertexCount,
+                  const unsigned int* indices, unsigned int indexCount)
+{
+    if (!vertices || !indices || vertexCount == 0 || indexCount == 0)
+        return false;
 
-       // Right
-       8, 9, 10,
-       10, 11, 8,
-
-       // Left
-       12, 13, 14,
-       14, 15, 12,
-
-       // Top
-       16, 17, 18,
-       18, 19, 16,
-
-       // Bottom
-       20, 21, 22,
-       22, 23, 20
-    };
+    Destroy(); // safe to call Create again without leaking
 
     glGenVertexArrays(1, &m_vao);
     glGenBuffers(1, &m_vbo);
+    glGenBuffers(1, &m_ebo);
 
     glBindVertexArray(m_vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,
+                 static_cast<GLsizeiptr>(vertexCount) * sizeof(Vertex),
+                 vertices, GL_STATIC_DRAW);
 
-    glGenBuffers(1, &m_ebo);
+    // The EBO binding is stored in the VAO, so keep it bound until the VAO is unbound.
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 static_cast<GLsizeiptr>(indexCount) * sizeof(unsigned int),
+                 indices, GL_STATIC_DRAW);
 
-    glBufferData(
-        GL_ELEMENT_ARRAY_BUFFER,
-        sizeof(indices),
-        indices,
-        GL_STATIC_DRAW
-    );
-    glVertexAttribPointer( //xyzの読み込み
-        0,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(Vertex),
-        (void*)0
-    );
-
+    // location 0: position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          (void*)offsetof(Vertex, x));
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer( //uvの読み込み
-        1,
-        2,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(Vertex),
-        (void*)(3 * sizeof(float))
-    );
-
+    // location 1: UV
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          (void*)offsetof(Vertex, u));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer( //法線の読み込み
-        2,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof(Vertex),
-        (void*)(5 * sizeof(float))
-    );
-
+    // location 2: normal
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          (void*)offsetof(Vertex, nx));
     glEnableVertexAttribArray(2);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    m_indexCount = static_cast<int>(indexCount);
+
+    m_gpuBytes = static_cast<unsigned long long>(vertexCount) * sizeof(Vertex)
+               + static_cast<unsigned long long>(indexCount) * sizeof(unsigned int);
+    MemTrack::Add(MemTrack::Category::MeshGpu, m_gpuBytes);
 
     return true;
 }
 
+bool Mesh::CreateCube()
+{
+    static const Vertex vertices[] =
+    {
+        // Front
+        {-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0, 0, 1},
+        { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0, 0, 1},
+        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  0, 0, 1},
+        {-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,  0, 0, 1},
+        // Back
+        { 0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0, 0,-1},
+        {-0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  0, 0,-1},
+        {-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0, 0,-1},
+        { 0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0, 0,-1},
+        // Right
+        { 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  1, 0, 0},
+        { 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  1, 0, 0},
+        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  1, 0, 0},
+        { 0.5f,  0.5f,  0.5f,  0.0f, 1.0f,  1, 0, 0},
+        // Left
+        {-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, -1, 0, 0},
+        {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, -1, 0, 0},
+        {-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, -1, 0, 0},
+        {-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, -1, 0, 0},
+        // Top
+        {-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,  0, 1, 0},
+        { 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  0, 1, 0},
+        { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0, 1, 0},
+        {-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0, 1, 0},
+        // Bottom
+        {-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0,-1, 0},
+        { 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  0,-1, 0},
+        { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f,  0,-1, 0},
+        {-0.5f, -0.5f,  0.5f,  0.0f, 1.0f,  0,-1, 0},
+    };
+
+    static const unsigned int indices[] =
+    {
+         0,  1,  2,   2,  3,  0, // Front
+         4,  5,  6,   6,  7,  4, // Back
+         8,  9, 10,  10, 11,  8, // Right
+        12, 13, 14,  14, 15, 12, // Left
+        16, 17, 18,  18, 19, 16, // Top
+        20, 21, 22,  22, 23, 20, // Bottom
+    };
+
+    return Create(vertices, static_cast<unsigned int>(sizeof(vertices) / sizeof(vertices[0])),
+                  indices,  static_cast<unsigned int>(sizeof(indices)  / sizeof(indices[0])));
+}
+
 void Mesh::Draw() const
 {
+    if (m_vao == 0)
+        return;
+
     glBindVertexArray(m_vao);
-    glDrawElements(
-        GL_TRIANGLES,
-        36,
-        GL_UNSIGNED_INT,
-        nullptr
-    );
+    glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, nullptr);
+    glBindVertexArray(0);
 }

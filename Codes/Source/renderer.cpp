@@ -56,10 +56,10 @@ void Renderer::Draw(Scene& scene)
 
         glm::mat4 model = objPtr->GetTransform()->GetWorldMatrix(); //ワールド行列の取得
 
-        renderer.material->GetShader()->SetMat4("uModel",model); //シェーダにワールド行列を渡す
-
-
         renderer.material->GetShader()->Use(); //シェーダの使用
+
+        renderer.material->GetShader()->SetMat4("uModel", model); //シェーダにワールド行列を渡す
+
         renderer.material->GetTexture()->Bind(); //テクスチャのバインド
 
 		renderer.mesh->Draw(); //メッシュの描写

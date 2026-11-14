@@ -62,13 +62,15 @@ glm::vec3 Transform::Down() const
 }
 glm::mat4 Transform::GetWorldMatrix() const
 {
-    if (parent == nullptr)
+    glm::mat4 localMatrix = GetLocalMatrix();
+
+    if (parent != nullptr)
     {
-        return GetLocalMatrix();
+        //親のトランスフォームを反映
+        return parent->GetWorldMatrix() * localMatrix;
     }
 
-    return
-        parent->GetWorldMatrix() * GetLocalMatrix();                                                                                                              
+    return localMatrix;
 }
 glm::mat4 Transform::GetLocalMatrix() const
 {
@@ -81,6 +83,12 @@ glm::mat4 Transform::GetLocalMatrix() const
     model = glm::scale( model,scale);
 
     return model;
+}
+glm::vec3 Transform::GetWorldPosition() const
+{
+    glm::mat4 worldMatrix = GetWorldMatrix();
+
+    return glm::vec3(worldMatrix[3]);
 }
 void Transform::SetParent(Transform* newParent)
 {
@@ -120,4 +128,46 @@ bool Transform::IsDescendantOf(const Transform* transform) const
     }
 
     return false;
+}
+void Transform::SetRotationEuler(const glm::vec3& euler)
+{
+    rotation = glm::quat(glm::radians(euler));
+}
+void Transform::SetWorldPosition(const glm::vec3& worldPosition)
+{
+    if (parent == nullptr)
+    {
+        position = worldPosition;
+        return;
+    }
+
+    glm::mat4 parentWorld = parent->GetWorldMatrix();
+
+    float determinant = glm::determinant(parentWorld);
+
+    if (std::abs(determinant) < 1e-6f)
+        return;
+
+    glm::mat4 inverseParent = glm::inverse(parentWorld);
+
+    position = glm::vec3(
+        inverseParent * glm::vec4(worldPosition, 1.0f)
+    );
+}
+glm::vec3 Transform::GetRotationEuler()
+{
+    return glm::degrees(glm::eulerAngles(rotation));
+}
+void Transform::Rotate(const glm::vec3& axis, float angle)
+{
+    if (glm::length(axis) <= 0.0001f)
+        return;
+
+    glm::quat deltaRotation =
+        glm::angleAxis(
+            glm::radians(angle),
+            glm::normalize(axis)
+        );
+
+    rotation = glm::normalize(rotation * deltaRotation);
 }

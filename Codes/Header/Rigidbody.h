@@ -17,6 +17,8 @@ public:
 
     bool isKinematic = false;
 
+    float restitution = 0.0f;
+
     bool isGrounded;
 
 public:

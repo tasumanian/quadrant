@@ -34,5 +34,15 @@ class Transform : public Component
 
 		glm::mat4 GetWorldMatrix() const;
 		glm::mat4 GetLocalMatrix() const;
+
+		glm::vec3 GetWorldPosition() const;
+
+		void SetRotationEuler(const glm::vec3& euler);
+		glm::vec3 GetRotationEuler();
+
+		void SetWorldPosition(const glm::vec3& worldPosition);
+
+		void Rotate(const glm::vec3& axis,float angle);
+
 		void SetParent(Transform* newParent);
 };

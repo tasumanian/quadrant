@@ -46,6 +46,50 @@ void PhysicsSystem::DetectCollision(Scene& scene)
 		}
 	}
 }
+AABB PhysicsSystem::GetWorldAABB(
+    GameObject& obj)
+{
+    Transform* transform = obj.GetTransform();
+    BoxCollider* collider = obj.GetComponent<BoxCollider>();
+
+    glm::mat4 worldMatrix = transform->GetWorldMatrix();
+
+    // Colliderのローカル中心をワールド座標に変換
+    glm::vec3 center = glm::vec3(
+        worldMatrix * glm::vec4(collider->center, 1.0f)
+    );
+
+    glm::vec3 localHalf = collider->size * 0.5f;
+
+    // ワールド行列の各軸の拡大率と回転を反映
+    glm::vec3 axisX = glm::vec3(worldMatrix[0]);
+    glm::vec3 axisY = glm::vec3(worldMatrix[1]);
+    glm::vec3 axisZ = glm::vec3(worldMatrix[2]);
+
+    glm::vec3 worldHalf;
+
+    worldHalf.x =
+        std::abs(axisX.x) * localHalf.x +
+        std::abs(axisY.x) * localHalf.y +
+        std::abs(axisZ.x) * localHalf.z;
+
+    worldHalf.y =
+        std::abs(axisX.y) * localHalf.x +
+        std::abs(axisY.y) * localHalf.y +
+        std::abs(axisZ.y) * localHalf.z;
+
+    worldHalf.z =
+        std::abs(axisX.z) * localHalf.x +
+        std::abs(axisY.z) * localHalf.y +
+        std::abs(axisZ.z) * localHalf.z;
+
+    return AABB{
+        center - worldHalf,
+        center + worldHalf,
+        center,
+        worldHalf
+    };
+}
 void PhysicsSystem::Gravity(Scene& scene, float dt)
 {
     auto& objects =
@@ -63,9 +107,9 @@ void PhysicsSystem::Gravity(Scene& scene, float dt)
 
         Transform& tr = *obj->GetTransform();
         //テスト用
-        tr.rotation =
-            glm::normalize(glm::angleAxis(glm::radians(90.0f * dt), glm::vec3(0, 1, 0))
-                * tr.rotation);
+        //tr.rotation =
+        //    glm::normalize(glm::angleAxis(glm::radians(90.0f * dt), glm::vec3(0, 1, 0))
+//         \\       * tr.rotation);
 
         if (rb->isKinematic)
             continue;
@@ -93,37 +137,24 @@ void PhysicsSystem::Integrate(Scene& scene, float dt)
             obj->GetComponent<Rigidbody>()->velocity * dt;
 	}
 }
-bool PhysicsSystem::CheckAABB(GameObject& obj1 , GameObject& obj2, CollisionInfo info)
+bool PhysicsSystem::CheckAABB(GameObject& obj1 , GameObject& obj2, CollisionInfo& info)
 {
 
-    if (!obj1.HasComponent<BoxCollider>() || !obj2.HasComponent<BoxCollider>())
+    if (!obj1.HasComponent<BoxCollider>() ||
+        !obj2.HasComponent<BoxCollider>())
         return false;
 
-    Transform* tr1 = obj1.GetTransform();
-    Transform* tr2 = obj2.GetTransform();
-    
-    BoxCollider* colliderA = obj1.GetComponent<BoxCollider>();
-    BoxCollider* colliderB = obj2.GetComponent<BoxCollider>();
+    AABB a = GetWorldAABB(obj1);
+    AABB b = GetWorldAABB(obj2);
 
-	glm::vec3 centerA = tr1->position;
-    glm::vec3 centerB = tr2->position;
+    glm::vec3 overlap =
+        glm::min(a.max, b.max) -
+        glm::max(a.min, b.min);
 
-    glm::vec3 halfA = colliderA->size * 0.5f;
-    glm::vec3 halfB = colliderB->size * 0.5f;
-
-    glm::vec3 aMin = centerA - halfA;
-    glm::vec3 aMax = centerA + halfA;
-
-    glm::vec3 bMin = centerB - halfB;
-    glm::vec3 bMax = centerB + halfB;
-
-
-    glm::vec3 overlap = glm::min(aMax, bMax)
-        - glm::max(aMin, bMin);
-
-    if (overlap.x <= 0.0f || overlap.y <= 0.0f || overlap.z <= 0.0f)
+    if (overlap.x <= 0.0f ||
+        overlap.y <= 0.0f ||
+        overlap.z <= 0.0f)
     {
-		// 衝突していない
         return false;
     }
 
@@ -131,33 +162,38 @@ bool PhysicsSystem::CheckAABB(GameObject& obj1 , GameObject& obj2, CollisionInfo
     info.other = &obj2;
 
     // 最も重なりが小さい軸を衝突法線にする
-        if (overlap.x <= overlap.y && overlap.x <= overlap.z)
-        {
-            info.penetration = overlap.x;
-            info.normal = glm::vec3(
-                centerB.x >= centerA.x ? 1.0f : -1.0f,
-                0.0f,
-                0.0f
-            );
-        }
-        else if (overlap.y <= overlap.x && overlap.y <= overlap.z)
-        {
-            info.penetration = overlap.y;
-            info.normal = glm::vec3(
-                0.0f,
-                centerB.y >= centerA.y ? 1.0f : -1.0f,
-                0.0f
-            );
-        }
-        else
-        {
-            info.penetration = overlap.z;
-            info.normal = glm::vec3(
-                0.0f,
-                0.0f,
-                centerB.z >= centerA.z ? 1.0f : -1.0f
-            );
-        }
+    if (overlap.x <= overlap.y &&
+        overlap.x <= overlap.z)
+    {
+        info.penetration = overlap.x;
+
+        info.normal = glm::vec3(
+            b.center.x >= a.center.x ? 1.0f : -1.0f,
+            0.0f,
+            0.0f
+        );
+    }
+    else if (overlap.y <= overlap.x &&
+        overlap.y <= overlap.z)
+    {
+        info.penetration = overlap.y;
+
+        info.normal = glm::vec3(
+            0.0f,
+            b.center.y >= a.center.y ? 1.0f : -1.0f,
+            0.0f
+        );
+    }
+    else
+    {
+        info.penetration = overlap.z;
+
+        info.normal = glm::vec3(
+            0.0f,
+            0.0f,
+            b.center.z >= a.center.z ? 1.0f : -1.0f
+        );
+    }
 
     return true;
 }
@@ -207,21 +243,30 @@ void PhysicsSystem::ResolveAABB(Scene& scene)
         const glm::vec3 normal = info.normal;
         const float penetration = info.penetration;
 
+        glm::vec3 worldPosA = transformA->GetWorldPosition();
+        glm::vec3 worldPosB = transformB->GetWorldPosition();
+
         if (movableA && movableB)
         {
-            // 両方が移動可能なら半分ずつ補正
-            transformA->position -= normal * (penetration * 0.5f);
-            transformB->position += normal * (penetration * 0.5f);
+            transformA->SetWorldPosition(
+                worldPosA - normal * (penetration * 0.5f)
+            );
+
+            transformB->SetWorldPosition(
+                worldPosB + normal * (penetration * 0.5f)
+            );
         }
         else if (movableA)
         {
-            // Aだけ移動可能
-            transformA->position -= normal * penetration;
+            transformA->SetWorldPosition(
+                worldPosA - normal * penetration
+            );
         }
         else
         {
-            // Bだけ移動可能
-            transformB->position += normal * penetration;
+            transformB->SetWorldPosition(
+                worldPosB + normal * penetration
+            );
         }
 
         // 法線の向きから接地状態を判定する
@@ -238,18 +283,23 @@ void PhysicsSystem::ResolveAABB(Scene& scene)
         ResolveCollisionVelocity(a, b, info.normal);
     }
 }
-void PhysicsSystem::ResolveCollisionVelocity(GameObject& a,GameObject& b,const glm::vec3& normal)
+void PhysicsSystem::ResolveCollisionVelocity(
+    GameObject& a,
+    GameObject& b,
+    const glm::vec3& normal)
 {
     Rigidbody* rbA = a.GetComponent<Rigidbody>();
     Rigidbody* rbB = b.GetComponent<Rigidbody>();
 
-    const bool movableA = rbA != nullptr && !rbA->isKinematic;
-    const bool movableB = rbB != nullptr && !rbB->isKinematic;
+    const bool movableA =
+        rbA != nullptr && !rbA->isKinematic;
+
+    const bool movableB =
+        rbB != nullptr && !rbB->isKinematic;
 
     if (!movableA && !movableB)
         return;
 
-    // 速度を取得する。Rigidbodyがない物体は固定物として速度0。
     glm::vec3 velocityA =
         movableA ? rbA->velocity : glm::vec3(0.0f);
 
@@ -257,34 +307,61 @@ void PhysicsSystem::ResolveCollisionVelocity(GameObject& a,GameObject& b,const g
         movableB ? rbB->velocity : glm::vec3(0.0f);
 
     // AからBへ向かう法線方向の相対速度
-    const float relativeNormalVelocity =
+    float relativeNormalVelocity =
         glm::dot(velocityB - velocityA, normal);
 
     // すでに離れている場合は何もしない
     if (relativeNormalVelocity >= 0.0f)
         return;
 
+    // 逆質量
+    float invMassA =
+        movableA && rbA->mass > 0.0f
+        ? 1.0f / rbA->mass : 0.0f;
+
+    float invMassB =
+        movableB && rbB->mass > 0.0f
+        ? 1.0f / rbB->mass : 0.0f;
+
+    float totalInvMass = invMassA + invMassB;
+
+    if (totalInvMass <= 0.0f)
+        return;
+
+    // 反発係数は小さい方を採用
+    float restitution = 0.0f;
+
     if (movableA && movableB)
     {
-        // 両方が動ける場合は相対速度を均等に分配
-        const glm::vec3 impulse =
-            normal * (relativeNormalVelocity * 0.5f);
-
-        rbA->velocity -= impulse;
-        rbB->velocity += impulse;
+        restitution = glm::min(
+            rbA->restitution,
+            rbB->restitution
+        );
     }
     else if (movableA)
     {
-        // Aだけが動ける場合
-        rbA->velocity +=
-            normal * relativeNormalVelocity;
+        restitution = rbA->restitution;
     }
     else
     {
-        // Bだけが動ける場合
-        rbB->velocity -=
-            normal * relativeNormalVelocity;
+        restitution = rbB->restitution;
     }
+
+    restitution = glm::clamp(restitution, 0.0f, 1.0f);
+
+    // 衝撃量
+    float impulseMagnitude =
+        -(1.0f + restitution) * relativeNormalVelocity
+        / totalInvMass;
+
+    glm::vec3 impulse =
+        normal * impulseMagnitude;
+
+    if (movableA)
+        rbA->velocity -= impulse * invMassA;
+
+    if (movableB)
+        rbB->velocity += impulse * invMassB;
 }
 bool PhysicsSystem::CheckRayAABB(const Ray& ray,GameObject& obj,float& distance
 )
