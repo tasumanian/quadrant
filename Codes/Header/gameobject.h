@@ -42,6 +42,8 @@ private :
 
     std::vector<std::unique_ptr<Component>> m_components;
 
+	std::vector<Component*> m_pendingRemoveComponents;
+
 };
 
 #include "GameObject.inl"

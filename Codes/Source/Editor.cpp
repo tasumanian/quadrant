@@ -5,6 +5,7 @@
 #include "Ray.h"
 #include "CameraSystem.h"
 #include "PhysicsSystem.h"
+#include "MemoryTracker.h"
 
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
@@ -34,6 +35,8 @@ void Editor::Draw(Scene* scene)
 
         ImGui::EndMainMenuBar();
     }
+
+    MemTrack::DrawImGuiWindow();
 
     m_inspectorWindow.Draw(*scene, *this);
     m_hierarchyWindow.Draw(*scene, *this);

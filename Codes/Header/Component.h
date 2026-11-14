@@ -12,6 +12,8 @@ class Component
 
 protected:
 
+    bool m_pendingRemoval = false;
+
     bool m_awaked = false;
 
     bool m_started = false;
@@ -43,6 +45,11 @@ public:
     void SetGameObject(GameObject* obj)
     {
         gameObject = obj;
+    }
+
+    bool IsPendingRemoval() const
+    {
+        return m_pendingRemoval;
     }
 
     GameObject* GetGameObject() const

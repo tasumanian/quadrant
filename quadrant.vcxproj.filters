@@ -99,7 +99,7 @@
     <ClCompile Include="Codes\Source\EventInput.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\gameobject.cpp">
+    <ClCompile Include="Codes\Source\GameObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Source\main.cpp">
@@ -111,7 +111,7 @@
     <ClCompile Include="Codes\Source\Material.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\mesh.cpp">
+    <ClCompile Include="Codes\Source\Mesh.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Source\PhysicsSystem.cpp">
@@ -120,7 +120,7 @@
     <ClCompile Include="Codes\Source\Ray.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Source\renderer.cpp">
+    <ClCompile Include="Codes\Source\Renderer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Source\ResourceManager.cpp">
@@ -149,6 +149,12 @@
     </ClCompile>
     <ClCompile Include="Codes\Source\InspectorWindow.cpp">
       <Filter>ソース ファイル\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Source\MemoryTracker.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Source\TerrainChunk.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -224,7 +230,7 @@
     <ClInclude Include="Codes\Header\Material.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Header\mesh.h">
+    <ClInclude Include="Codes\Header\Mesh.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Codes\Header\PhysicsSystem.h">
@@ -294,6 +300,12 @@
       <Filter>ヘッダー ファイル\Editor</Filter>
     </ClInclude>
     <ClInclude Include="CollisionInfo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Header\MemoryTracker.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Header\TerrainChunk.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

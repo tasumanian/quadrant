@@ -11,13 +11,10 @@ void InspectorWindow::Draw(Scene& scene, Editor& editor)
             ImVec2(io.DisplaySize.x - 300, 20),
             ImGuiCond_Once
         );
-
         ImGui::SetNextWindowSize(
             ImVec2(300, 500),
             ImGuiCond_Once
         );
-
-
         ImGui::Begin("Inspector");
 
         if (selectobj == nullptr)
@@ -94,7 +91,26 @@ void InspectorWindow::DrawProperty(
 
             break;
         }
-        default:
+        case PropertyType::quat:
+            glm::quat* value =
+                static_cast<glm::quat*>(
+                    property->GetRawPointer());
+
+
+            glm::vec3 euler =
+                glm::degrees(glm::eulerAngles(*value));
+
+            // Euler角を編集
+            if (ImGui::DragFloat3(
+                property->GetMetadata().displayName.c_str(),
+                &euler.x))
+            {
+                // 値が変更された場合、Quaternionへ戻す
+                *value = glm::quat(glm::radians(euler));
+            }
+
             break;
+    //    default:
+    //       break;
     }
 }
