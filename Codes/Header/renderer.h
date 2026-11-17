@@ -9,6 +9,7 @@
 #include "Scene.h"
 #include "CharacterController.h"
 #include "CameraSystem.h"
+#include "Frustum.h"
 #include <glad/glad.h>
 #include <cmath>
 #include <vector>
@@ -23,14 +24,17 @@ class Renderer
 		void Draw(Scene& scene);
 		void EndFrame(Window& window);
 
+		// Stats of the last Draw call
+		int GetDrawnCount() const { return m_drawnCount; }
+		int GetCulledCount() const { return m_culledCount; }
+
 	private:
-		Rigidbody m_rigidbody;
-		BoxCollider m_boxCollider;
-		CameraSystem* m_cameraSystem;
-		Timer* m_timer;
-		StateInput m_stateinput;
+		CameraSystem* m_cameraSystem = nullptr;
+		Timer* m_timer = nullptr;
 		Window* m_window = nullptr;
 		Uint64 m_lastTicks = 0;
-		CharacterController m_characterController;
-		
+
+		Frustum m_frustum;
+		int m_drawnCount = 0;
+		int m_culledCount = 0;
 };

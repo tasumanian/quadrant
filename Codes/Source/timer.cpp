@@ -16,7 +16,7 @@ void Timer::Tick()
 
 	//前フレームとの差
 	m_deltaTime = static_cast<float>(current - m_lastCounter) / static_cast<float>(frequency);
-	SDL_Log("Delta Time: %f seconds", m_deltaTime);
+	//SDL_Log("Delta Time: %f seconds", m_deltaTime);
 	m_lastCounter = current;
 
 	m_accumulator += m_deltaTime;

@@ -11,6 +11,7 @@
 #include "Editor.h"
 #include "CameraSystem.h"
 #include "ComponentSystem.h"
+#include "ChunkManager.h"
 #include <math.h>
 
 class App
@@ -29,11 +30,10 @@ class App
 		EventInput m_input;
 		Renderer m_renderer;
 		Scene m_scene;
-		Rigidbody m_rigidbody;
 		PhysicsSystem m_physicsSystem;
-		BoxCollider m_boxCollider;
 		CharacterController m_chacacterController;
 		ResourceManager m_resourceManager;
 		ComponentSystem m_componentSystem;
 		Editor m_editor;
+		ChunkManager m_chunkManager;
 };

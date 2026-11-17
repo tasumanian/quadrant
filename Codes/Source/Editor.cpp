@@ -7,6 +7,8 @@
 #include "PhysicsSystem.h"
 #include "MemoryTracker.h"
 
+#include "ChunkManager.h"
+#include "Renderer.h"
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl3.h>
@@ -22,7 +24,7 @@ void Editor::Init(Window* window)
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void Editor::Draw(Scene* scene)
+void Editor::Draw(Scene* scene,ChunkManager* chunkManager, Renderer* renderer)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL3_NewFrame();
@@ -38,8 +40,17 @@ void Editor::Draw(Scene* scene)
 
     MemTrack::DrawImGuiWindow();
 
+    chunkManager->DrawImGui(&testboolean);
+
     m_inspectorWindow.Draw(*scene, *this);
     m_hierarchyWindow.Draw(*scene, *this);
+
+    ImGui::Begin("Render");
+    ImGui::Text("drawn : %d", renderer->GetDrawnCount());
+    ImGui::Text("culled: %d", renderer->GetCulledCount());
+    ImGui::Text("objects: %d", (int)scene->GetObjects().size());
+ 
+    ImGui::End();
 
     ImGui::Render();
 
