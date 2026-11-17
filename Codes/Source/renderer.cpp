@@ -7,74 +7,102 @@
 bool Renderer::Initialize(Window& window, Timer& timer , CameraSystem& cameraSystem)
 {
     SDL_Log("Renderer Initialize");
-    //SDL_Log("%s", kVertexShader);
     m_window = &window;
     m_cameraSystem = &cameraSystem;
-    //カメラの座標を手前にしておく
     m_timer = &timer;
-    glEnable(GL_DEPTH_TEST); //深度比較
+    glEnable(GL_DEPTH_TEST);
+
+    // VSync: lets the display refresh pace the loop instead of SDL_Delay
+    if (!SDL_GL_SetSwapInterval(1))
+        SDL_Log("VSync not available: %s", SDL_GetError());
     m_lastTicks = SDL_GetTicks();
 
     return true;
 }
+
 void Renderer::Draw(Scene& scene)
 {
-	float deltaTime = m_timer->GetDeltaTime(); //デルタタイムの取得
+    float deltaTime = m_timer->GetDeltaTime();
+    (void)deltaTime;
 
-    CameraComponent*
-        camera =
-        scene.GetMainCamera();
+    CameraComponent* camera = scene.GetMainCamera();
 
-	if (camera == nullptr)
-	{
-		SDL_Log("No camera found in the scene.");
-		return;
-	}
+    if (camera == nullptr)
+    {
+        SDL_Log("No camera found in the scene.");
+        return;
+    }
 
-    float aspect =
-        (float)1280 /
-        (float)720;
+    float aspect = (float)1280 / (float)720;
 
-    glm::mat4 view =
-        m_cameraSystem->GetViewMatrix(camera);
+    glm::mat4 view = m_cameraSystem->GetViewMatrix(camera);
+    glm::mat4 proj = m_cameraSystem->GetProjectionMatrix(camera, aspect);
 
-    glm::mat4 proj =
-        m_cameraSystem->GetProjectionMatrix(
-            camera,
-            aspect);
+    // Frustum for culling
+    m_frustum.Update(proj * view);
+    m_drawnCount = 0;
+    m_culledCount = 0;
 
-    // オブジェクトの描写
     for (auto& objPtr : scene.GetObjects())
     {
-        if(!objPtr->HasComponent<MeshRenderer>())
+        if (!objPtr->HasComponent<MeshRenderer>())
             continue;
 
         auto& renderer = *objPtr->GetComponent<MeshRenderer>();
+        if (!renderer.mesh || !renderer.material)
+            continue;
 
-        renderer.material->GetShader()->SetMat4("uView", view); //シェーダにカメラ軸行列を渡す
-        renderer.material->GetShader()->SetMat4("uProj", proj); //シェーダに投影行列を渡す
+        const glm::mat4 model = objPtr->GetTransform()->GetWorldMatrix();
 
-        glm::mat4 model = objPtr->GetTransform()->GetWorldMatrix(); //ワールド行列の取得
+        // Frustum culling with the mesh's bounding box moved to world space
+        if (renderer.mesh->HasBounds())
+        {
+            const glm::vec3 bmin = renderer.mesh->GetBoundsMin();
+            const glm::vec3 bmax = renderer.mesh->GetBoundsMax();
+            const glm::vec3 localCenter = (bmin + bmax) * 0.5f;
+            const glm::vec3 localExtents = (bmax - bmin) * 0.5f;
 
-        renderer.material->GetShader()->Use(); //シェーダの使用
+            const glm::vec3 worldCenter = glm::vec3(model * glm::vec4(localCenter, 1.0f));
 
-        renderer.material->GetShader()->SetMat4("uModel", model); //シェーダにワールド行列を渡す
+            // World-space half extents of the transformed box
+            glm::vec3 worldExtents(0.0f);
+            for (int row = 0; row < 3; ++row)
+            {
+                worldExtents[row] = std::fabs(model[0][row]) * localExtents.x
+                                  + std::fabs(model[1][row]) * localExtents.y
+                                  + std::fabs(model[2][row]) * localExtents.z;
+            }
 
-        renderer.material->GetTexture()->Bind(); //テクスチャのバインド
+            if (!m_frustum.IsBoxVisible(worldCenter, worldExtents))
+            {
+                ++m_culledCount;
+                continue;
+            }
+        }
 
-		renderer.mesh->Draw(); //メッシュの描写
+        auto* shader = renderer.material->GetShader();
+
+        shader->Use(); // activate first: glUniform* applies to the current program
+        shader->SetMat4("uView", view);
+        shader->SetMat4("uProj", proj);
+        shader->SetMat4("uModel", model);
+
+        renderer.material->GetTexture()->Bind();
+        renderer.mesh->Draw();
+
+        ++m_drawnCount;
     }
 }
 
-void Renderer::BeginFrame() //window描写
+void Renderer::BeginFrame()
 {
-	glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
 
-    //色及び深度の初期化
+    // Clear color and depth
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 }
 
 void Renderer::EndFrame(Window& window)
 {
-	window.Present(); //window更新
+    window.Present();
 }

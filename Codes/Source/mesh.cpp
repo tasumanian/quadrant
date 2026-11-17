@@ -26,6 +26,9 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
         m_ebo = other.m_ebo;
         m_indexCount = other.m_indexCount;
         m_gpuBytes = other.m_gpuBytes;
+        m_hasBounds = other.m_hasBounds;
+        m_boundsMin = other.m_boundsMin;
+        m_boundsMax = other.m_boundsMax;
 
         other.m_vao = 0;
         other.m_vbo = 0;
@@ -43,6 +46,7 @@ void Mesh::Destroy()
     if (m_vao) glDeleteVertexArrays(1, &m_vao);
     m_vao = m_vbo = m_ebo = 0;
     m_indexCount = 0;
+    m_hasBounds = false;
 
     if (m_gpuBytes)
     {
@@ -95,6 +99,17 @@ bool Mesh::Create(const Vertex* vertices, unsigned int vertexCount,
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     m_indexCount = static_cast<int>(indexCount);
+
+    // Local-space bounding box
+    m_boundsMin = glm::vec3(vertices[0].x, vertices[0].y, vertices[0].z);
+    m_boundsMax = m_boundsMin;
+    for (unsigned int k = 1; k < vertexCount; ++k)
+    {
+        const glm::vec3 p(vertices[k].x, vertices[k].y, vertices[k].z);
+        m_boundsMin = glm::min(m_boundsMin, p);
+        m_boundsMax = glm::max(m_boundsMax, p);
+    }
+    m_hasBounds = true;
 
     m_gpuBytes = static_cast<unsigned long long>(vertexCount) * sizeof(Vertex)
                + static_cast<unsigned long long>(indexCount) * sizeof(unsigned int);

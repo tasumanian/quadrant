@@ -8,6 +8,8 @@ class Scene;
 class Window;
 class CameraSystem;
 class PhysicsSystem;
+class ChunkManager;
+class Renderer;
 
 class Editor
 {
@@ -18,7 +20,7 @@ public:
 
     GameObject* GetSelectedObject();
     void Update(Window& window, CameraSystem& cameraSystem, PhysicsSystem& physicsSystem, Scene& scene);
-    void Draw(Scene* scene);
+    void Draw(Scene* scene, ChunkManager* chunkManager,Renderer* renderer);
     void Init(Window* window);
 
 private:
@@ -26,6 +28,7 @@ private:
     GameObject* m_selectedObject = nullptr;
 	InspectorWindow m_inspectorWindow;
 	HierarchyWindow m_hierarchyWindow;
+    bool testboolean = true;
 
     //void DrawTransform(GameObject& obj);
     //void DrawRigidbody(GameObject& obj);

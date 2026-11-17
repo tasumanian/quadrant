@@ -133,19 +133,12 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>
-      C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\SDL3-3.4.8\include;
-      C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\glad\include;
-      C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\glm-master;
-      C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\imgui-master;
-      C:\Users\fbutm\source\repos\ProjectT\quadrant\addon\imgui-master\backends;
-      %(AdditionalIncludeDirectories)
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)addon\SDL3-3.4.8\include;$(ProjectDir)addon\addon\glad\include;$(ProjectDir)addon\addon\glm-master;$(ProjectDir)addon\addon\imgui-master;$(ProjectDir)addon\addon\imgui-master\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>;\addon\imgui-master\backends;\addon\imgui-master;addon\imgui-master;addon\imgui-master\backends;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)addon\addon\imgui-master\backends;$(ProjectDir)addon\addon\imgui-master;$(ProjectDir)addon\addon\SDL3.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -162,6 +155,7 @@
     <ClCompile Include="Codes\Source\CameraComponent.cpp" />
     <ClCompile Include="Codes\Source\CameraSystem.cpp" />
     <ClCompile Include="Codes\Source\CharacterController.cpp" />
+    <ClCompile Include="Codes\Source\ChunkManager.cpp" />
     <ClCompile Include="Codes\Source\Component.cpp" />
     <ClCompile Include="Codes\Source\ComponentSystem.cpp" />
     <ClCompile Include="Codes\Source\Editor.cpp" />
@@ -205,6 +199,7 @@
     <ClInclude Include="Codes\Header\CameraComponent.h" />
     <ClInclude Include="Codes\Header\CameraSystem.h" />
     <ClInclude Include="Codes\Header\CharacterController.h" />
+    <ClInclude Include="Codes\Header\ChunkManager.h" />
     <ClInclude Include="Codes\Header\Component.h" />
     <ClInclude Include="Codes\Header\ComponentRegistry.h" />
     <ClInclude Include="Codes\Header\Components.h" />
@@ -213,6 +208,7 @@
     <ClInclude Include="Codes\Header\EditorCameraController.h" />
     <ClInclude Include="Codes\Header\EditorWindow.h" />
     <ClInclude Include="Codes\Header\EventInput.h" />
+    <ClInclude Include="Codes\Header\Frustum.h" />
     <ClInclude Include="Codes\Header\gameobject.h" />
     <ClInclude Include="Codes\Header\HierarchyWindow.h" />
     <ClInclude Include="Codes\Header\InspectorWindow.h" />
