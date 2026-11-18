@@ -194,6 +194,7 @@
     <ClInclude Include="addon\imgui-master\imstb_rectpack.h" />
     <ClInclude Include="addon\imgui-master\imstb_textedit.h" />
     <ClInclude Include="addon\imgui-master\imstb_truetype.h" />
+    <ClInclude Include="Codes\Header\Allocators.h" />
     <ClInclude Include="Codes\Header\app.h" />
     <ClInclude Include="Codes\Header\BoxCollider.h" />
     <ClInclude Include="Codes\Header\CameraComponent.h" />

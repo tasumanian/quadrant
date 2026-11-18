@@ -1,9 +1,85 @@
 #include "TerrainChunk.h"
 
 #include <algorithm>
+#include <utility>
 #include <glm/glm.hpp>
 #include <glm/gtc/noise.hpp>
 
+#include "Allocators.h"
+
+// ---------------------------------------------------------------
+// ChunkData (pool-backed storage)
+// ---------------------------------------------------------------
+ChunkData::ChunkData(ChunkData&& other) noexcept
+{
+    *this = std::move(other);
+}
+
+ChunkData& ChunkData::operator=(ChunkData&& other) noexcept
+{
+    if (this != &other)
+    {
+        Release(); // give back what we own before taking over
+
+        vertices = other.vertices;
+        vertexCount = other.vertexCount;
+        vertexCapacity = other.vertexCapacity;
+        indices = other.indices;
+        indexCount = other.indexCount;
+        indexCapacity = other.indexCapacity;
+        m_pool = other.m_pool;
+        m_block = other.m_block;
+
+        // The source no longer owns anything.
+        other.vertices = nullptr;
+        other.vertexCount = other.vertexCapacity = 0;
+        other.indices = nullptr;
+        other.indexCount = other.indexCapacity = 0;
+        other.m_pool = nullptr;
+        other.m_block = nullptr;
+    }
+    return *this;
+}
+
+bool ChunkData::Acquire(Alloc::PoolAllocator& pool)
+{
+    Release();
+
+    void* block = pool.Allocate();
+    if (!block)
+        return false;
+
+    unsigned char* base = static_cast<unsigned char*>(block);
+
+    m_pool = &pool;
+    m_block = block;
+
+    vertices = reinterpret_cast<Mesh::Vertex*>(base);
+    vertexCount = 0;
+    vertexCapacity = Terrain::kMaxChunkVertices;
+
+    indices = reinterpret_cast<unsigned int*>(base + Terrain::kChunkIndexOffset);
+    indexCount = 0;
+    indexCapacity = Terrain::kMaxChunkIndices;
+    return true;
+}
+
+void ChunkData::Release()
+{
+    if (m_block)
+        m_pool->Free(m_block);
+
+    m_pool = nullptr;
+    m_block = nullptr;
+    vertices = nullptr;
+    vertexCount = vertexCapacity = 0;
+    indices = nullptr;
+    indexCount = indexCapacity = 0;
+}
+
+// ---------------------------------------------------------------
+// Terrain
+// ---------------------------------------------------------------
 namespace Terrain
 {
     float Height(float worldX, float worldZ)
@@ -22,30 +98,39 @@ namespace Terrain
         return h;
     }
 
-    void BuildChunkData(int chunkX, int chunkZ, ChunkData& out, int lod)
+    bool BuildChunkData(int chunkX, int chunkZ, int lod,
+                        ChunkData& out, Alloc::LinearAllocator& scratch)
     {
+        if (!out.IsValid())
+            return false;
+
         lod = std::max(0, std::min(lod, kMaxLod));
+        out.vertexCount = 0;
+        out.indexCount = 0;
 
         const int cells = CellsForLod(lod);            // cells per side at this LOD
         const float step = kCellSize * (1 << lod);     // world size of one cell
         const int vertsPerSide = cells + 1;
         const int paddedSide = vertsPerSide + 2;       // 1 extra ring for normals
 
-        out.vertices.clear();
-        out.indices.clear();
-        out.vertices.reserve(static_cast<size_t>(vertsPerSide) * vertsPerSide + 4 * cells);
-        out.indices.reserve(static_cast<size_t>(cells) * cells * 6 + 4 * cells * 6);
+        // Everything allocated from 'scratch' below is released when this
+        // scope ends (the arena goes back to the state it had on entry).
+        Alloc::LinearScope scope(scratch);
+
+        float* heights = scratch.AllocateArray<float>(
+            static_cast<std::size_t>(paddedSide) * paddedSide);
+        if (!heights)
+            return false;
 
         const float originX = chunkX * kChunkSize;
         const float originZ = chunkZ * kChunkSize;
 
         // Sample the height field once, with spacing = step (padded by 1 ring).
-        std::vector<float> heights(static_cast<size_t>(paddedSide) * paddedSide);
         for (int j = 0; j < paddedSide; ++j)
         {
             for (int i = 0; i < paddedSide; ++i)
             {
-                heights[static_cast<size_t>(j) * paddedSide + i] =
+                heights[static_cast<std::size_t>(j) * paddedSide + i] =
                     Height(originX + (i - 1) * step, originZ + (j - 1) * step);
             }
         }
@@ -53,7 +138,30 @@ namespace Terrain
         // H(i, j) for i, j in [-1, cells + 1]
         auto H = [&](int i, int j)
         {
-            return heights[static_cast<size_t>(j + 1) * paddedSide + (i + 1)];
+            return heights[static_cast<std::size_t>(j + 1) * paddedSide + (i + 1)];
+        };
+
+        bool overflow = false;
+
+        auto pushVertex = [&](const Mesh::Vertex& v) -> unsigned int
+        {
+            if (out.vertexCount >= out.vertexCapacity)
+            {
+                overflow = true;
+                return 0;
+            }
+            out.vertices[out.vertexCount] = v;
+            return out.vertexCount++;
+        };
+
+        auto pushIndex = [&](unsigned int index)
+        {
+            if (out.indexCount >= out.indexCapacity)
+            {
+                overflow = true;
+                return;
+            }
+            out.indices[out.indexCount++] = index;
         };
 
         // ---- Grid vertices ----
@@ -78,7 +186,7 @@ namespace Terrain
                 v.nx = n.x;
                 v.ny = n.y;
                 v.nz = n.z;
-                out.vertices.push_back(v);
+                pushVertex(v);
             }
         }
 
@@ -92,30 +200,33 @@ namespace Terrain
                 const unsigned int c = j * vertsPerSide + (i + 1);       // (i+1, j)
                 const unsigned int d = (j + 1) * vertsPerSide + (i + 1); // (i+1, j+1)
 
-                out.indices.push_back(a);
-                out.indices.push_back(b);
-                out.indices.push_back(c);
+                pushIndex(a);
+                pushIndex(b);
+                pushIndex(c);
 
-                out.indices.push_back(c);
-                out.indices.push_back(b);
-                out.indices.push_back(d);
+                pushIndex(c);
+                pushIndex(b);
+                pushIndex(d);
             }
         }
 
         // ---- Skirts: vertical walls hanging below the four edges ----
         const unsigned int kNone = 0xFFFFFFFFu;
-        const unsigned int gridVertexCount = static_cast<unsigned int>(out.vertices.size());
-        std::vector<unsigned int> skirtOf(gridVertexCount, kNone);
+        const unsigned int gridVertexCount = out.vertexCount;
+
+        unsigned int* skirtOf = scratch.AllocateArray<unsigned int>(gridVertexCount);
+        if (!skirtOf)
+            return false;
+        std::fill_n(skirtOf, gridVertexCount, kNone);
 
         // Lowered copy of a top vertex (created once, then reused).
         auto skirtVertex = [&](unsigned int top) -> unsigned int
         {
             if (skirtOf[top] == kNone)
             {
-                Mesh::Vertex v = out.vertices[top]; // copy before push_back
+                Mesh::Vertex v = out.vertices[top];
                 v.y -= kSkirtDepth;
-                skirtOf[top] = static_cast<unsigned int>(out.vertices.size());
-                out.vertices.push_back(v);
+                skirtOf[top] = pushVertex(v);
             }
             return skirtOf[top];
         };
@@ -127,20 +238,22 @@ namespace Terrain
             const unsigned int a2 = skirtVertex(a);
             const unsigned int b2 = skirtVertex(b);
 
-            out.indices.push_back(a);
-            out.indices.push_back(b);
-            out.indices.push_back(b2);
+            pushIndex(a);
+            pushIndex(b);
+            pushIndex(b2);
 
-            out.indices.push_back(a);
-            out.indices.push_back(b2);
-            out.indices.push_back(a2);
+            pushIndex(a);
+            pushIndex(b2);
+            pushIndex(a2);
         };
 
         auto V = [&](int i, int j) { return static_cast<unsigned int>(j * vertsPerSide + i); };
 
-        for (int i = 0; i < cells; ++i)        addSkirtQuad(V(i, 0),         V(i + 1, 0));         // z = 0   edge, walking +x
-        for (int j = 0; j < cells; ++j)        addSkirtQuad(V(cells, j),     V(cells, j + 1));     // x = max edge, walking +z
-        for (int i = cells; i >= 1; --i)       addSkirtQuad(V(i, cells),     V(i - 1, cells));     // z = max edge, walking -x
-        for (int j = cells; j >= 1; --j)       addSkirtQuad(V(0, j),         V(0, j - 1));         // x = 0   edge, walking -z
+        for (int i = 0; i < cells; ++i)    addSkirtQuad(V(i, 0),     V(i + 1, 0));     // z = 0   edge, walking +x
+        for (int j = 0; j < cells; ++j)    addSkirtQuad(V(cells, j), V(cells, j + 1)); // x = max edge, walking +z
+        for (int i = cells; i >= 1; --i)   addSkirtQuad(V(i, cells), V(i - 1, cells)); // z = max edge, walking -x
+        for (int j = cells; j >= 1; --j)   addSkirtQuad(V(0, j),     V(0, j - 1));     // x = 0   edge, walking -z
+
+        return !overflow;
     }
 }

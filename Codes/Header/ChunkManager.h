@@ -1,6 +1,8 @@
 #pragma once
 
+#include <atomic>
 #include <condition_variable>
+#include <cstddef>
 #include <deque>
 #include <memory>
 #include <mutex>
@@ -10,6 +12,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+#include "Allocators.h"
 #include "Mesh.h"
 #include "TerrainChunk.h"
 
@@ -20,6 +23,7 @@ class Material;
 // Keeps only the chunks around the focus position loaded, and picks a
 // level of detail (LOD) for each chunk based on its distance.
 //  - Worker threads build vertex/index data (CPU only, no OpenGL).
+//    Each worker has its own scratch arena; results use pooled buffers.
 //  - The main thread uploads finished data to the GPU and creates objects.
 // Chunk meshes are owned here (not by ResourceManager) so they can be freed.
 class ChunkManager
@@ -62,6 +66,7 @@ private:
         int lod = 0;
     };
 
+    // Move-only (ChunkData owns a pool block).
     struct ChunkResult
     {
         int x = 0;
@@ -87,6 +92,10 @@ private:
     void StopWorkers();
     void WorkerLoop();
 
+    // Number of pooled buffers. In-flight requests are limited to 32 (see the
+    // UI slider), so 64 blocks leave a comfortable margin.
+    static constexpr std::size_t kPoolBlocks = 64;
+
     // Main-thread state
     Scene*    m_scene    = nullptr;
     Material* m_material = nullptr;
@@ -95,7 +104,7 @@ private:
 
     int m_loadRadius       = 2; // chunks kept in each direction
     int m_maxLoadsPerFrame = 1; // GPU uploads per frame
-    int m_maxOutstanding   = 8; // requests allowed in flight at once
+    int m_maxOutstanding   = 8; // requests allowed in flight at once (max 32)
 
     // LOD settings (distances in chunk units)
     bool  m_lodEnabled = true;
@@ -105,6 +114,11 @@ private:
     int m_centerX = 0;
     int m_centerZ = 0;
     int m_missing = 0;
+
+    // IMPORTANT: the pool must be declared BEFORE every container that holds
+    // ChunkData. Members are destroyed in reverse order, so the pool is then
+    // destroyed AFTER those containers have returned their blocks.
+    std::unique_ptr<Alloc::PoolAllocator> m_chunkPool;
 
     std::unordered_map<long long, Chunk> m_chunks;
     std::unordered_set<long long> m_pendingKeys; // requested, not yet uploaded/discarded
@@ -117,4 +131,7 @@ private:
     std::vector<ChunkResult> m_results;
     bool m_stop = false;
     std::vector<std::thread> m_threads;
+
+    // Highest scratch-arena usage seen by any worker (for the UI).
+    std::atomic<std::size_t> m_scratchPeak{ 0 };
 };

@@ -317,6 +317,9 @@
     <ClInclude Include="Codes\Header\Frustum.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Codes\Header\Allocators.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SDL3-3.4.8\VisualC\SDL\SDL.vcxproj">

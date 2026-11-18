@@ -16,6 +16,10 @@
 ChunkManager::~ChunkManager()
 {
     StopWorkers();
+
+    // Return every pooled buffer while the pool still exists.
+    m_ready.clear();
+    m_results.clear();
 }
 
 void ChunkManager::Init(Scene* scene, Material* material, float baseY)
@@ -23,6 +27,11 @@ void ChunkManager::Init(Scene* scene, Material* material, float baseY)
     m_scene = scene;
     m_material = material;
     m_baseY = baseY;
+
+    // Reserve all chunk buffers up front. Must exist before the workers start.
+    m_chunkPool = std::make_unique<Alloc::PoolAllocator>(
+        Terrain::kChunkBlockBytes, kPoolBlocks, 16, MemTrack::Category::Chunk);
+
     StartWorkers();
 }
 
@@ -107,6 +116,10 @@ void ChunkManager::StopWorkers()
 
 void ChunkManager::WorkerLoop()
 {
+    // Per-thread scratch arena: no locking needed, because only this thread
+    // ever touches it.
+    Alloc::LinearAllocator scratch(Terrain::kScratchBytes);
+
     for (;;)
     {
         ChunkRequest request;
@@ -125,7 +138,23 @@ void ChunkManager::WorkerLoop()
         result.x = request.x;
         result.z = request.z;
         result.lod = request.lod;
-        Terrain::BuildChunkData(request.x, request.z, result.data, request.lod);
+
+        if (result.data.Acquire(*m_chunkPool))
+        {
+            if (!Terrain::BuildChunkData(request.x, request.z, request.lod,
+                                         result.data, scratch))
+            {
+                result.data.Release(); // invalid result: the main thread discards it
+            }
+
+            // Track the highest scratch usage (atomic max).
+            const std::size_t peak = scratch.Peak();
+            std::size_t prev = m_scratchPeak.load();
+            while (peak > prev && !m_scratchPeak.compare_exchange_weak(prev, peak))
+            {
+            }
+        }
+        // If the pool was empty, 'result' stays invalid and is discarded later.
 
         {
             std::lock_guard<std::mutex> lock(m_mutex);
@@ -175,6 +204,8 @@ void ChunkManager::Update(const glm::vec3& focusWorldPos)
     }
 
     // 3) Upload a limited number per frame (OpenGL, main thread only).
+    //    'r' owns a pool block; it is returned automatically at the end of
+    //    each iteration, whether the result was used or discarded.
     int uploaded = 0;
     while (!m_ready.empty() && uploaded < m_maxLoadsPerFrame)
     {
@@ -183,6 +214,10 @@ void ChunkManager::Update(const glm::vec3& focusWorldPos)
 
         const long long key = MakeKey(r.x, r.z);
         m_pendingKeys.erase(key);
+
+        // Build failed or the pool was empty: it will be requested again.
+        if (!r.data.IsValid())
+            continue;
 
         // The player may have moved away while this chunk was being built.
         const bool inRange = std::abs(r.x - m_centerX) <= unloadRadius &&
@@ -274,8 +309,11 @@ void ChunkManager::Update(const glm::vec3& focusWorldPos)
 bool ChunkManager::ApplyResult(ChunkResult& r)
 {
     auto mesh = std::make_unique<Mesh>();
-    if (!mesh->Create(r.data.vertices.data(), static_cast<unsigned int>(r.data.vertices.size()),
-                      r.data.indices.data(),  static_cast<unsigned int>(r.data.indices.size())))
+
+    // glBufferData copies the data, so the pooled buffer can be released
+    // right after this call.
+    if (!mesh->Create(r.data.vertices, r.data.vertexCount,
+                      r.data.indices,  r.data.indexCount))
     {
         return false;
     }
@@ -363,6 +401,21 @@ void ChunkManager::DrawImGui(bool* open)
                 lodCount[0], lodCount[1], lodCount[2], lodCount[3]);
     ImGui::Text("triangles : %lld", triangles);
 
+    // Allocator statistics
+    if (m_chunkPool)
+    {
+        ImGui::Separator();
+        ImGui::Text("pool blocks : %d / %d (peak %d)",
+                    static_cast<int>(m_chunkPool->Used()),
+                    static_cast<int>(m_chunkPool->BlockCount()),
+                    static_cast<int>(m_chunkPool->Peak()));
+        ImGui::Text("block size  : %.1f KB", m_chunkPool->BlockSize() / 1024.0);
+        ImGui::Text("scratch peak: %d / %d bytes (per worker)",
+                    static_cast<int>(m_scratchPeak.load()),
+                    static_cast<int>(Terrain::kScratchBytes));
+    }
+
+    ImGui::Separator();
     ImGui::Checkbox("enable LOD", &m_lodEnabled);
     ImGui::SliderFloat("LOD0 range", &m_lodDist[0], 0.5f, 16.0f);
     ImGui::SliderFloat("LOD1 range", &m_lodDist[1], 0.5f, 16.0f);
